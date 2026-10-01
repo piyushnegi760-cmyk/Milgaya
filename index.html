@@ -2,938 +2,1115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07111f">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Milgaya — Smart QR Lost & Found</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <style>
-    body{
-      margin:0;
-      font-family:Inter,system-ui,sans-serif;
-      color:#fff;
-      background:
-        radial-gradient(circle at 10% 10%,rgba(6,182,212,.15),transparent 28%),
-        radial-gradient(circle at 90% 10%,rgba(37,99,235,.16),transparent 30%),
-        #06101c;
-      min-height:100vh;
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: #f7f8fa;
     }
 
-    .glass{
-      background:rgba(8,22,38,.75);
-      border:1px solid rgba(148,163,184,.15);
-      backdrop-filter:blur(18px);
-      box-shadow:0 25px 80px rgba(0,0,0,.3);
+    .hidden {
+      display: none !important;
     }
 
-    .btn{
-      background:linear-gradient(135deg,#06b6d4,#2563eb);
-      transition:.25s;
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.07);
     }
 
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 15px 35px rgba(37,99,235,.3);
+    input, textarea {
+      outline: none;
     }
 
-    .success{
-      animation:pop .4s ease;
-    }
-
-    @keyframes pop{
-      from{opacity:0;transform:scale(.8)}
-      to{opacity:1;transform:scale(1)}
-    }
-
-    .loader{
-      width:35px;
-      height:35px;
-      border:3px solid #334155;
-      border-top-color:#22d3ee;
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-    }
-
-    @keyframes spin{
-      to{transform:rotate(360deg)}
+    input:focus, textarea:focus {
+      border-color: #111827;
     }
   </style>
 </head>
 
 <body>
 
-<div class="max-w-md mx-auto px-5 py-8">
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
-  <!-- BRAND -->
-  <div class="text-center mb-8">
+<header class="bg-black text-white">
+  <div class="max-w-6xl mx-auto px-5 py-5 flex justify-between items-center">
 
-    <div class="mx-auto w-16 h-16 rounded-2xl
-                bg-gradient-to-br from-cyan-400 to-blue-600
-                flex items-center justify-center text-3xl shadow-xl">
-      🔎
+    <div class="text-2xl font-black">
+      Milgaya<span class="text-yellow-400">.</span>
     </div>
 
-    <h1 class="text-3xl font-black mt-4">
-      Milgaya
-    </h1>
+    <div id="headerUser" class="hidden items-center gap-3">
+      <span id="userEmail" class="text-sm text-gray-300"></span>
 
-    <p class="text-slate-400 text-sm">
-      Smart QR Lost & Found
-    </p>
-
-  </div>
-
-
-  <!-- LOADING -->
-  <div id="loading" class="glass rounded-3xl p-8 text-center">
-
-    <div class="loader mx-auto"></div>
-
-    <p class="text-slate-400 mt-4">
-      Checking Milgaya tag...
-    </p>
+      <button
+        onclick="logout()"
+        class="bg-white text-black px-4 py-2 rounded-xl font-semibold">
+        Logout
+      </button>
+    </div>
 
   </div>
+</header>
 
 
-  <!-- OWNER -->
-  <div id="owner" class="hidden glass rounded-3xl p-6">
+<!-- =========================================================
+     AUTH SECTION
+========================================================= -->
 
-    <div class="mb-6">
+<section id="authSection" class="min-h-screen flex items-center justify-center px-5 py-12">
 
-      <span class="text-xs font-bold text-cyan-400">
-        OWNER ACTIVATION
-      </span>
+  <div class="card w-full max-w-md p-7">
 
-      <h2 class="text-2xl font-black mt-2">
-        Activate your Milgaya Tag
-      </h2>
+    <div class="text-center mb-7">
+      <div class="text-4xl font-black mb-2">
+        Milgaya<span class="text-yellow-500">.</span>
+      </div>
 
-      <p class="text-sm text-slate-400 mt-2">
-        Add your contact details so a finder can return your item.
+      <p class="text-gray-500">
+        Smart QR for your belongings
       </p>
+    </div>
+
+
+    <!-- AUTH TABS -->
+
+    <div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl mb-6">
+
+      <button
+        id="loginTab"
+        onclick="showAuthMode('login')"
+        class="py-3 rounded-lg bg-white font-semibold">
+        Login
+      </button>
+
+      <button
+        id="signupTab"
+        onclick="showAuthMode('signup')"
+        class="py-3 rounded-lg font-semibold text-gray-500">
+        Sign Up
+      </button>
 
     </div>
 
 
-    <form id="ownerForm" class="space-y-4">
+    <!-- LOGIN -->
 
-      <div>
+    <div id="loginBox">
 
-        <label class="text-sm text-slate-300">
-          Name
-        </label>
-
-        <input
-          id="name"
-          required
-          maxlength="80"
-          placeholder="Your name"
-          class="w-full mt-2 bg-slate-950 border border-slate-700
-                 rounded-xl px-4 py-3 outline-none
-                 focus:border-cyan-400">
-
-      </div>
-
-
-      <div>
-
-        <label class="text-sm text-slate-300">
-          WhatsApp Number
-        </label>
-
-        <input
-          id="whatsapp"
-          required
-          type="tel"
-          placeholder="+919876543210"
-          class="w-full mt-2 bg-slate-950 border border-slate-700
-                 rounded-xl px-4 py-3 outline-none
-                 focus:border-cyan-400">
-
-      </div>
-
-
-      <div>
-
-        <label class="text-sm text-slate-300">
-          Alternative Contact Number
-        </label>
-
-        <input
-          id="alternate"
-          type="tel"
-          placeholder="+919876543210"
-          class="w-full mt-2 bg-slate-950 border border-slate-700
-                 rounded-xl px-4 py-3 outline-none
-                 focus:border-cyan-400">
-
-      </div>
-
-
-      <label class="flex gap-3 text-xs text-slate-400">
-
-        <input
-          id="ownerConsent"
-          type="checkbox"
-          required
-          class="mt-1">
-
-        <span>
-          I agree to let Milgaya use these details to help return
-          my lost item.
-        </span>
-
+      <label class="block text-sm font-semibold mb-2">
+        Email
       </label>
 
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="you@example.com"
+        class="w-full border rounded-xl px-4 py-3 mb-4">
+
+      <label class="block text-sm font-semibold mb-2">
+        Password
+      </label>
+
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="••••••••"
+        class="w-full border rounded-xl px-4 py-3 mb-3">
 
       <button
-        id="activateButton"
-        class="btn w-full py-4 rounded-xl font-black">
-
-        Activate Tag
-
+        onclick="loginEmailPassword()"
+        class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Login
       </button>
 
-      <p
-        id="ownerError"
-        class="hidden text-sm text-red-300 bg-red-500/10
-               rounded-xl p-3">
-      </p>
-
-    </form>
-
-
-    <!-- SUCCESS -->
-
-    <div id="ownerSuccess"
-         class="hidden success text-center py-8">
-
-      <div class="text-6xl">
-        ✅
-      </div>
-
-      <h2 class="text-2xl font-black mt-4">
-        Tag Activated
-      </h2>
-
-      <p class="text-slate-400 mt-2">
-        Your Milgaya tag is now active.
-      </p>
-
-      <p class="text-xs text-slate-500 mt-4">
-        Someone who finds your item can now contact you.
-      </p>
+      <button
+        onclick="forgotPassword()"
+        class="w-full text-sm text-gray-600 mt-4">
+        Forgot password?
+      </button>
 
     </div>
+
+
+    <!-- SIGNUP -->
+
+    <div id="signupBox" class="hidden">
+
+      <label class="block text-sm font-semibold mb-2">
+        Email
+      </label>
+
+      <input
+        id="signupEmail"
+        type="email"
+        placeholder="you@example.com"
+        class="w-full border rounded-xl px-4 py-3 mb-4">
+
+      <label class="block text-sm font-semibold mb-2">
+        Password
+      </label>
+
+      <input
+        id="signupPassword"
+        type="password"
+        placeholder="Minimum 6 characters"
+        class="w-full border rounded-xl px-4 py-3 mb-4">
+
+      <button
+        onclick="signupEmailPassword()"
+        class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Create Account
+      </button>
+
+    </div>
+
+
+    <div class="flex items-center gap-3 my-6">
+      <div class="h-px bg-gray-200 flex-1"></div>
+      <span class="text-gray-400 text-sm">OR</span>
+      <div class="h-px bg-gray-200 flex-1"></div>
+    </div>
+
+
+    <!-- GOOGLE -->
+
+    <button
+      onclick="googleLogin()"
+      class="w-full border py-3 rounded-xl font-semibold bg-white">
+      Continue with Google
+    </button>
+
+
+    <!-- PHONE OTP -->
+
+    <div class="mt-5">
+
+      <button
+        onclick="showPhoneLogin()"
+        class="w-full border py-3 rounded-xl font-semibold">
+        Login with Phone OTP
+      </button>
+
+    </div>
+
+
+    <div id="phoneBox" class="hidden mt-5">
+
+      <input
+        id="phoneNumber"
+        type="tel"
+        placeholder="+91XXXXXXXXXX"
+        class="w-full border rounded-xl px-4 py-3 mb-3">
+
+      <button
+        onclick="sendPhoneOTP()"
+        class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold">
+        Send OTP
+      </button>
+
+      <input
+        id="phoneOTP"
+        type="text"
+        placeholder="Enter OTP"
+        class="w-full border rounded-xl px-4 py-3 mt-3">
+
+      <button
+        onclick="verifyPhoneOTP()"
+        class="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold mt-3">
+        Verify OTP
+      </button>
+
+    </div>
+
+    <p id="authMessage" class="text-center text-sm mt-5"></p>
 
   </div>
 
+</section>
 
-  <!-- FINDER -->
 
-  <div id="finder" class="hidden glass rounded-3xl p-6">
+<!-- =========================================================
+     DASHBOARD
+========================================================= -->
 
-    <div class="text-center">
+<section id="dashboardSection" class="hidden">
 
-      <div class="mx-auto w-20 h-20 rounded-full
-                  bg-emerald-500/10
-                  flex items-center justify-center text-4xl">
-        🎒
-      </div>
+  <main class="max-w-6xl mx-auto px-5 py-10">
 
-      <h2 class="text-2xl font-black mt-5">
-        You found a Milgaya item
-      </h2>
-
-      <p class="text-slate-400 text-sm mt-2">
-        Thank you for helping return it to its owner.
+    <div class="mb-10">
+      <p class="text-gray-500">
+        Welcome to Milgaya
       </p>
 
+      <h1 class="text-4xl font-black mt-1">
+        Your QR Dashboard
+      </h1>
     </div>
 
 
-    <!-- REGISTERED -->
+    <!-- CREATE QR CARD -->
 
-    <div id="registered" class="hidden mt-6">
+    <div class="card p-7 mb-10">
 
-      <div class="rounded-2xl bg-emerald-500/10
-                  border border-emerald-500/20 p-4">
+      <h2 class="text-2xl font-black mb-2">
+        Create New QR
+      </h2>
 
-        <p class="font-bold text-emerald-300">
-          ✓ Tag is activated
-        </p>
-
-        <p class="text-sm text-slate-400 mt-1">
-          You can contact the owner securely through WhatsApp.
-        </p>
-
-      </div>
+      <p class="text-gray-500 mb-7">
+        Create a QR code and attach it to your belongings.
+      </p>
 
 
-      <button
-        id="whatsappButton"
-        class="w-full mt-5 py-4 rounded-xl
-               bg-emerald-500 text-slate-950
-               font-black hover:bg-emerald-400">
+      <div class="grid md:grid-cols-2 gap-6">
 
-        💬 Contact Owner via WhatsApp
+        <!-- MESSAGE -->
 
-      </button>
+        <div>
 
+          <label class="block font-bold mb-2">
+            Your message
+          </label>
 
-      <!-- OPTIONAL LOCATION -->
+          <textarea
+            id="qrMessage"
+            rows="7"
+            maxlength="300"
+            placeholder="Example: If you find this item, please scan this QR and contact me."
+            class="w-full border rounded-2xl p-4"></textarea>
 
-      <div class="mt-5 p-4 rounded-2xl
-                  bg-blue-500/10
-                  border border-blue-500/20">
+          <p class="text-xs text-gray-400 mt-2">
+            Maximum 300 characters
+          </p>
 
-        <p class="font-bold text-blue-300">
-          📍 Help locate the item
-        </p>
-
-        <p class="text-xs text-slate-400 mt-1">
-          If you want, share your approximate location with
-          the owner. Your browser will ask for permission.
-        </p>
-
-        <button
-          id="locationButton"
-          class="mt-3 w-full py-3 rounded-xl
-                 bg-blue-500/20 text-blue-300
-                 font-bold">
-
-          Share My Location
-
-        </button>
-
-        <p
-          id="locationStatus"
-          class="text-xs text-slate-500 mt-2">
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <!-- NOT ACTIVE -->
-
-    <div id="notRegistered" class="hidden mt-6">
-
-      <div class="rounded-2xl
-                  bg-amber-500/10
-                  border border-amber-500/20
-                  p-5 text-center">
-
-        <div class="text-4xl">
-          ⏳
         </div>
 
-        <h3 class="font-bold mt-3">
-          Tag not activated
-        </h3>
 
-        <p class="text-sm text-slate-400 mt-2">
-          This tag has not been activated by the owner yet.
-        </p>
+        <!-- QUANTITY -->
+
+        <div>
+
+          <label class="block font-bold mb-2">
+            Number of QR codes
+          </label>
+
+          <div class="flex items-center gap-3 mb-5">
+
+            <button
+              onclick="changeQty(-1)"
+              class="w-12 h-12 bg-gray-100 rounded-xl text-xl font-bold">
+              −
+            </button>
+
+            <input
+              id="quantity"
+              type="number"
+              value="1"
+              min="1"
+              max="100"
+              oninput="updatePrice()"
+              class="w-24 h-12 border rounded-xl text-center font-bold">
+
+            <button
+              onclick="changeQty(1)"
+              class="w-12 h-12 bg-gray-100 rounded-xl text-xl font-bold">
+              +
+            </button>
+
+          </div>
+
+
+          <div class="bg-gray-100 rounded-2xl p-5">
+
+            <div class="flex justify-between mb-2">
+              <span>Price per QR</span>
+              <b>₹50</b>
+            </div>
+
+            <div class="flex justify-between text-xl">
+              <span>Total</span>
+              <b id="totalPrice">₹50</b>
+            </div>
+
+          </div>
+
+
+          <button
+            onclick="startPayment()"
+            class="w-full bg-black text-white py-4 rounded-2xl font-bold mt-5">
+            Pay & Generate QR
+          </button>
+
+        </div>
 
       </div>
 
     </div>
 
 
-    <!-- ERROR -->
+    <!-- QR LIST -->
 
-    <div
-      id="finderError"
-      class="hidden mt-5 p-4 rounded-xl
-             bg-red-500/10
-             border border-red-500/20
-             text-sm text-red-300">
+    <div>
+
+      <div class="flex justify-between items-center mb-5">
+
+        <h2 class="text-2xl font-black">
+          My QR Codes
+        </h2>
+
+        <button
+          onclick="loadMyQRs()"
+          class="text-sm font-semibold">
+          Refresh
+        </button>
+
+      </div>
+
+      <div
+        id="qrList"
+        class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      </div>
+
     </div>
 
+  </main>
 
-    <div class="text-center text-xs text-slate-600 mt-6">
-      Tag ID:
-      <span id="tagText">—</span>
+</section>
+
+
+<!-- =========================================================
+     FINDER PAGE
+========================================================= -->
+
+<section id="finderSection" class="hidden min-h-screen px-5 py-12">
+
+  <div class="max-w-md mx-auto">
+
+    <div class="card p-7 text-center">
+
+      <div class="text-3xl font-black mb-2">
+        Milgaya<span class="text-yellow-500">.</span>
+      </div>
+
+      <p class="text-gray-500 mb-7">
+        You've scanned a Milgaya QR.
+      </p>
+
+      <div id="finderLoading">
+        Loading...
+      </div>
+
+      <div id="finderResult" class="hidden">
+
+        <div class="bg-gray-100 rounded-2xl p-5 text-left">
+
+          <p class="text-xs text-gray-400 mb-2">
+            OWNER MESSAGE
+          </p>
+
+          <p
+            id="finderMessage"
+            class="font-semibold">
+          </p>
+
+        </div>
+
+        <a
+          id="whatsappButton"
+          target="_blank"
+          class="block bg-green-500 text-white py-4 rounded-2xl font-bold mt-5">
+          💬 Contact Owner on WhatsApp
+        </a>
+
+        <p class="text-xs text-gray-400 mt-5">
+          Owner's phone number is not displayed publicly.
+        </p>
+
+      </div>
+
+      <div id="finderNotFound" class="hidden">
+
+        <p class="font-bold">
+          This QR is not active.
+        </p>
+
+        <p class="text-gray-500 mt-2">
+          Please try again later.
+        </p>
+
+      </div>
+
     </div>
 
   </div>
 
+</section>
 
-  <footer class="text-center text-xs text-slate-600 mt-8">
-    © <span id="year"></span> Milgaya
-  </footer>
+
+<!-- =========================================================
+     PAYMENT MODAL
+========================================================= -->
+
+<div
+  id="paymentLoading"
+  class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center px-5">
+
+  <div class="bg-white rounded-2xl p-7 text-center">
+
+    <div class="font-bold">
+      Creating secure payment...
+    </div>
+
+    <div class="text-gray-500 text-sm mt-2">
+      Please wait.
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-/* ============================================================
-   MILGAYA CONFIGURATION
-   ============================================================
+/* =========================================================
+   CONFIG
+========================================================= */
 
-   After creating Supabase:
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
 
-   SUPABASE_URL:
-   https://xxxxxxxx.supabase.co
+const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
-   SUPABASE_ANON_KEY:
-   your publishable/anon key
+const RAZORPAY_KEY_ID = "YOUR_RAZORPAY_KEY_ID";
 
-   NEVER put the service_role key here.
-============================================================ */
 
-const SUPABASE_URL =
-  "YOUR_SUPABASE_URL";
+const { createClient } = supabase;
 
-const SUPABASE_ANON_KEY =
-  "YOUR_SUPABASE_ANON_KEY";
-
-
-/* SUPABASE */
-
-const supabaseConfigured =
-  SUPABASE_URL.startsWith("https://") &&
-  !SUPABASE_URL.includes("YOUR_") &&
-  !SUPABASE_ANON_KEY.includes("YOUR_");
-
-const db = supabaseConfigured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    )
-  : null;
-
-
-/* ELEMENTS */
-
-const loading =
-  document.getElementById("loading");
-
-const owner =
-  document.getElementById("owner");
-
-const finder =
-  document.getElementById("finder");
-
-const ownerForm =
-  document.getElementById("ownerForm");
-
-const ownerError =
-  document.getElementById("ownerError");
-
-const finderError =
-  document.getElementById("finderError");
-
-
-document.getElementById("year").textContent =
-  new Date().getFullYear();
-
-
-/* HELPERS */
-
-function normalizeTag(value){
-
-  return (value || "")
-    .trim()
-    .toUpperCase()
-    .replace(/[^A-Z0-9_-]/g,"")
-    .slice(0,64);
-
-}
-
-
-function normalizePhone(value){
-
-  return (value || "")
-    .replace(/[^\d+]/g,"")
-    .trim();
-
-}
-
-
-function getURLData(){
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  return {
-
-    setup:
-      normalizeTag(
-        params.get("setup")
-      ),
-
-    setupKey:
-      params.get("key") || "",
-
-    tag:
-      normalizeTag(
-        params.get("tag")
-      )
-
-  };
-
-}
-
-
-function showOwner(){
-
-  loading.classList.add("hidden");
-  finder.classList.add("hidden");
-  owner.classList.remove("hidden");
-
-}
-
-
-function showFinder(){
-
-  loading.classList.add("hidden");
-  owner.classList.add("hidden");
-  finder.classList.remove("hidden");
-
-}
-
-
-/* ============================================================
-   OWNER ACTIVATION
-============================================================ */
-
-async function activateTag(){
-
-  const {
-    setup,
-    setupKey
-  } = getURLData();
-
-
-  if(!setup || !setupKey){
-
-    ownerError.textContent =
-      "Invalid activation link.";
-
-    ownerError.classList.remove("hidden");
-
-    return;
-
-  }
-
-
-  const name =
-    document
-      .getElementById("name")
-      .value
-      .trim();
-
-
-  const whatsapp =
-    normalizePhone(
-      document
-        .getElementById("whatsapp")
-        .value
-    );
-
-
-  const alternate =
-    normalizePhone(
-      document
-        .getElementById("alternate")
-        .value
-    );
-
-
-  if(name.length < 2){
-
-    ownerError.textContent =
-      "Please enter your name.";
-
-    ownerError.classList.remove("hidden");
-
-    return;
-
-  }
-
-
-  if(!/^\+?\d{10,15}$/.test(whatsapp)){
-
-    ownerError.textContent =
-      "Enter a valid WhatsApp number with country code.";
-
-    ownerError.classList.remove("hidden");
-
-    return;
-
-  }
-
-
-  const button =
-    document.getElementById(
-      "activateButton"
-    );
-
-
-  button.disabled = true;
-  button.textContent =
-    "Activating...";
-
-
-  try{
-
-    const { data,error } =
-      await db.rpc(
-        "activate_milgaya_tag",
-        {
-          p_tag_id: setup,
-          p_setup_key: setupKey,
-          p_owner_name: name,
-          p_alt_phone:
-            alternate || null,
-          p_whatsapp: whatsapp
-        }
-      );
-
-
-    if(error)
-      throw error;
-
-
-    if(data !== true){
-
-      throw new Error(
-        "Invalid setup key or tag already activated."
-      );
-
-    }
-
-
-    ownerForm.classList.add("hidden");
-
-    document
-      .getElementById("ownerSuccess")
-      .classList.remove("hidden");
-
-
-  }catch(error){
-
-    console.error(error);
-
-    ownerError.textContent =
-      "Activation failed. Check your activation link or contact support.";
-
-    ownerError.classList.remove("hidden");
-
-    button.disabled = false;
-    button.textContent =
-      "Activate Tag";
-
-  }
-
-}
-
-
-ownerForm.addEventListener(
-  "submit",
-  async function(event){
-
-    event.preventDefault();
-
-    await activateTag();
-
-  }
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 
-/* ============================================================
-   FINDER
-============================================================ */
+/* =========================================================
+   GLOBAL
+========================================================= */
 
-async function loadFinder(){
+const PRICE_PER_QR = 50;
+
+let currentUser = null;
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const params = new URLSearchParams(window.location.search);
+
+  const qrToken = params.get("qr");
+
+  if (qrToken) {
+    showFinderPage(qrToken);
+    return;
+  }
 
   const {
-    tag
-  } = getURLData();
+    data: {
+      session
+    }
+  } = await db.auth.getSession();
 
+  if (session) {
 
-  showFinder();
+    currentUser = session.user;
 
+    showDashboard();
 
-  document
-    .getElementById("tagText")
-    .textContent =
-      tag || "UNKNOWN";
+  } else {
 
-
-  if(!tag){
-
-    finderError.textContent =
-      "Invalid Milgaya QR link.";
-
-    finderError.classList.remove("hidden");
-
-    return;
+    showAuth();
 
   }
 
-
-  try{
-
-    /*
-      Only public RPC result is returned.
-      Owner name and alternate number are NOT exposed.
-    */
-
-    const {
-      data,
-      error
-    } =
-      await db.rpc(
-        "get_milgaya_contact",
-        {
-          p_tag_id: tag
-        }
-      );
+});
 
 
-    if(error)
-      throw error;
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+db.auth.onAuthStateChange((event, session) => {
+
+  if (session) {
+
+    currentUser = session.user;
+
+    showDashboard();
+
+  } else {
+
+    currentUser = null;
+
+    showAuth();
+
+  }
+
+});
 
 
-    /*
-      Scan timestamp is logged automatically.
-      No IP address or precise location is collected.
-    */
+/* =========================================================
+   AUTH UI
+========================================================= */
 
-    await db.rpc(
-      "log_milgaya_scan",
-      {
-        p_tag_id: tag
-      }
-    );
+function showAuth() {
 
+  document
+    .getElementById("authSection")
+    .classList.remove("hidden");
 
-    if(
-      !data ||
-      data.length === 0 ||
-      !data[0].whatsapp
-    ){
+  document
+    .getElementById("dashboardSection")
+    .classList.add("hidden");
 
-      document
-        .getElementById("notRegistered")
-        .classList.remove("hidden");
+  document
+    .getElementById("finderSection")
+    .classList.add("hidden");
 
-      return;
+  document
+    .getElementById("headerUser")
+    .classList.add("hidden");
 
-    }
+}
 
 
-    document
-      .getElementById("registered")
-      .classList.remove("hidden");
+function showDashboard() {
+
+  document
+    .getElementById("authSection")
+    .classList.add("hidden");
+
+  document
+    .getElementById("finderSection")
+    .classList.add("hidden");
+
+  document
+    .getElementById("dashboardSection")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerUser")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("headerUser")
+    .classList.add("flex");
+
+  document
+    .getElementById("userEmail")
+    .textContent =
+      currentUser?.email ||
+      currentUser?.phone ||
+      "Account";
+
+  loadMyQRs();
+
+}
 
 
-    /*
-      WhatsApp stays in JavaScript memory.
-      It is not displayed as text.
-    */
+function showAuthMode(mode) {
 
-    const whatsapp =
-      data[0].whatsapp;
+  const login = document.getElementById("loginBox");
+  const signup = document.getElementById("signupBox");
 
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
 
-    document
-      .getElementById("whatsappButton")
-      .addEventListener(
-        "click",
-        function(){
+  if (mode === "login") {
 
-          const number =
-            whatsapp.replace(/\D/g,"");
+    login.classList.remove("hidden");
+    signup.classList.add("hidden");
 
+    loginTab.classList.add("bg-white");
+    signupTab.classList.remove("bg-white");
 
-          const message =
-            `Hello, I found your lost item with Milgaya Tag ID ${tag}. ` +
-            `I would like to help return it to you.`;
+  } else {
 
+    login.classList.add("hidden");
+    signup.classList.remove("hidden");
 
-          const url =
-            "https://wa.me/" +
-            number +
-            "?text=" +
-            encodeURIComponent(message);
-
-
-          window.location.href = url;
-
-        }
-      );
-
-
-    /*
-      LOCATION BUTTON
-    */
-
-    document
-      .getElementById("locationButton")
-      .addEventListener(
-        "click",
-        function(){
-
-          shareLocation(tag);
-
-        }
-      );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    finderError.textContent =
-      "Unable to check this tag right now. Please try again.";
-
-    finderError.classList.remove("hidden");
+    signupTab.classList.add("bg-white");
+    loginTab.classList.remove("bg-white");
 
   }
 
 }
 
 
-/* ============================================================
-   FINDER LOCATION — EXPLICIT USER CONSENT
-============================================================ */
+/* =========================================================
+   EMAIL SIGNUP
+========================================================= */
 
-function shareLocation(tag){
+async function signupEmailPassword() {
 
-  const status =
-    document.getElementById(
-      "locationStatus"
-    );
+  const email =
+    document.getElementById("signupEmail").value.trim();
 
+  const password =
+    document.getElementById("signupPassword").value;
 
-  if(!navigator.geolocation){
+  if (!email || !password) {
 
-    status.textContent =
-      "Location is not supported by this browser.";
+    setAuthMessage("Email and password required.");
 
     return;
-
   }
 
+  if (password.length < 6) {
 
-  status.textContent =
-    "Requesting location permission...";
+    setAuthMessage("Password must be at least 6 characters.");
 
+    return;
+  }
 
-  navigator.geolocation.getCurrentPosition(
+  const {
+    error
+  } = await db.auth.signUp({
+    email,
+    password
+  });
 
-    async function(position){
+  if (error) {
 
-      const latitude =
-        position.coords.latitude;
+    setAuthMessage(error.message);
 
-      const longitude =
-        position.coords.longitude;
+    return;
+  }
 
-
-      try{
-
-        const {error} =
-          await db.rpc(
-            "save_milgaya_location",
-            {
-              p_tag_id: tag,
-              p_latitude: latitude,
-              p_longitude: longitude
-            }
-          );
-
-
-        if(error)
-          throw error;
-
-
-        status.textContent =
-          "✓ Location shared successfully.";
-
-      }catch(error){
-
-        console.error(error);
-
-        status.textContent =
-          "Could not save the location.";
-
-      }
-
-    },
-
-    function(){
-
-      status.textContent =
-        "Location permission was not granted.";
-
-    },
-
-    {
-      enableHighAccuracy:false,
-      timeout:10000,
-      maximumAge:300000
-    }
-
+  setAuthMessage(
+    "Account created. Check your email if confirmation is enabled."
   );
 
 }
 
 
-/* ============================================================
-   BOOT
-============================================================ */
+/* =========================================================
+   EMAIL LOGIN
+========================================================= */
 
-async function boot(){
+async function loginEmailPassword() {
 
-  if(!supabaseConfigured){
+  const email =
+    document.getElementById("loginEmail").value.trim();
 
-    loading.classList.add("hidden");
+  const password =
+    document.getElementById("loginPassword").value;
 
-    showFinder();
+  if (!email || !password) {
 
-    finderError.textContent =
-      "Supabase is not connected yet. Add your Supabase URL and publishable/anon key in this file.";
-
-    finderError.classList.remove("hidden");
+    setAuthMessage("Enter email and password.");
 
     return;
-
   }
 
+  const {
+    error
+  } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+
+    setAuthMessage(error.message);
+
+    return;
+  }
+
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+
+async function forgotPassword() {
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  if (!email) {
+
+    setAuthMessage(
+      "Enter your email first."
+    );
+
+    return;
+  }
+
+  const redirectURL =
+    window.location.origin +
+    window.location.pathname;
 
   const {
-    setup
-  } = getURLData();
+    error
+  } = await db.auth.resetPasswordForEmail(
+    email,
+    {
+      redirectTo: redirectURL
+    }
+  );
+
+  if (error) {
+
+    setAuthMessage(error.message);
+
+    return;
+  }
+
+  setAuthMessage(
+    "Password reset email sent."
+  );
+
+}
 
 
-  if(setup){
+/* =========================================================
+   GOOGLE LOGIN
+========================================================= */
 
-    showOwner();
+async function googleLogin() {
 
-  }else{
+  const {
+    error
+  } = await db.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo:
+        window.location.origin +
+        window.location.pathname
+    }
+  });
 
-    await loadFinder();
+  if (error) {
+
+    setAuthMessage(error.message);
 
   }
 
 }
 
 
-boot();
+/* =========================================================
+   PHONE OTP
+========================================================= */
 
-</script>
+function showPhoneLogin() {
 
-</body>
-</html>
+  document
+    .getElementById("phoneBox")
+    .classList.remove("hidden");
+
+}
+
+
+async function sendPhoneOTP() {
+
+  const phone =
+    document
+      .getElementById("phoneNumber")
+      .value
+      .trim();
+
+  if (!phone) {
+
+    setAuthMessage("Enter your phone number.");
+
+    return;
+  }
+
+  const {
+    error
+  } = await db.auth.signInWithOtp({
+    phone
+  });
+
+  if (error) {
+
+    setAuthMessage(error.message);
+
+    return;
+  }
+
+  setAuthMessage(
+    "OTP sent to your phone."
+  );
+
+}
+
+
+async function verifyPhoneOTP() {
+
+  const phone =
+    document
+      .getElementById("phoneNumber")
+      .value
+      .trim();
+
+  const token =
+    document
+      .getElementById("phoneOTP")
+      .value
+      .trim();
+
+  if (!phone || !token) {
+
+    setAuthMessage(
+      "Enter phone number and OTP."
+    );
+
+    return;
+  }
+
+  const {
+    error
+  } = await db.auth.verifyOtp({
+    phone,
+    token,
+    type: "sms"
+  });
+
+  if (error) {
+
+    setAuthMessage(error.message);
+
+    return;
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout() {
+
+  await db.auth.signOut();
+
+}
+
+
+/* =========================================================
+   AUTH MESSAGE
+========================================================= */
+
+function setAuthMessage(message) {
+
+  document
+    .getElementById("authMessage")
+    .textContent = message;
+
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+function changeQty(change) {
+
+  const input =
+    document.getElementById("quantity");
+
+  let value =
+    parseInt(input.value || "1", 10);
+
+  value += change;
+
+  if (value < 1) value = 1;
+
+  if (value > 100) value = 100;
+
+  input.value = value;
+
+  updatePrice();
+
+}
+
+
+function updatePrice() {
+
+  const input =
+    document.getElementById("quantity");
+
+  let quantity =
+    parseInt(input.value || "1", 10);
+
+  if (quantity < 1) quantity = 1;
+
+  if (quantity > 100) quantity = 100;
+
+  input.value = quantity;
+
+  const total =
+    quantity * PRICE_PER_QR;
+
+  document
+    .getElementById("totalPrice")
+    .textContent =
+      "₹" + total;
+
+}
+
+
+/* =========================================================
+   CREATE RAZORPAY ORDER
+========================================================= */
+
+async function startPayment() {
+
+  if (!currentUser) {
+
+    alert("Please login first.");
+
+    return;
+  }
+
+  const message =
+    document
+      .getElementById("qrMessage")
+      .value
+      .trim();
+
+  const quantity =
+    parseInt(
+      document.getElementById("quantity").value,
+      10
+    );
+
+  if (!message) {
+
+    alert("Please enter your QR message.");
+
+    return;
+  }
+
+  if (!quantity || quantity < 1 || quantity > 100) {
+
+    alert("Quantity must be between 1 and 100.");
+
+    return;
+  }
+
+  const loading =
+    document.getElementById("paymentLoading");
+
+  loading.classList.remove("hidden");
+  loading.classList.add("flex");
+
+
+  const {
+    data,
+    error
+  } = await db.functions.invoke(
+    "create-razorpay-order",
+    {
+      body: {
+        quantity,
+        message
+      }
+    }
+  );
+
+
+  loading.classList.add("hidden");
+  loading.classList.remove("flex");
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Could not create payment order."
+    );
+
+    return;
+  }
+
+  if (!data || !data.orderId) {
+
+    alert(
+      data?.error ||
+      "Payment order creation failed."
+    );
+
+    return;
+  }
+
+
+  openRazorpayCheckout(
+    data.orderId,
+    data.amount,
+    data.currency,
+    data.orderRecordId
+  );
+
+}
+
+
+/* =========================================================
+   RAZORPAY CHECKOUT
+========================================================= */
+
+function openRazorpayCheckout(
+  orderId,
+  amount,
+  currency,
+  orderRecordId
+) {
+
+  const options = {
+
+    key: RAZORPAY_KEY_ID,
+
+    amount,
+
+    currency,
+
+    name: "Milgaya",
+
+    description:
+      "Milgaya QR Codes",
+
+    order_id: orderId,
+
+    prefill: {
+
+      email:
+        currentUser?.email || ""
+
+    },
+
+    theme: {
+
+      color: "#111111"
+
+    },
+
+
+    handler:
