@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Milgaya</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar dashboard-nav">
+
+  <a href="index.html" class="logo">Mil<span>gaya</span></a>
+
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="my-qr.html">My QR</a>
+    <a href="notifications.html">Notifications</a>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+  </nav>
+
+</header>
+
+
+<main class="dashboard">
+
+  <div class="welcome">
+    <div>
+      <span class="small-label">DASHBOARD</span>
+      <h1>Welcome 👋</h1>
+      <p>Manage your Milgaya QR codes.</p>
+    </div>
+
+    <a href="generate-qr.html" class="btn primary">
+      + Generate QR
+    </a>
+  </div>
+
+
+  <div class="stats">
+
+    <div class="stat-card">
+      <span>QR Codes</span>
+      <strong id="qrCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Scans</span>
+      <strong id="scanCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Notifications</span>
+      <strong id="notificationCount">0</strong>
+    </div>
+
+  </div>
+
+
+  <section class="dashboard-section">
+
+    <div class="section-heading">
+      <h2>Get your QR code</h2>
+      <p>Attach it to anything you don't want to lose.</p>
+    </div>
+
+    <div class="purchase-card">
+
+      <div>
+        <h3>Milgaya QR</h3>
+        <p>Unique QR code for your belongings.</p>
+      </div>
+
+      <div class="price">
+        ₹25 <small>/ QR</small>
+      </div>
+
+      <a href="generate-qr.html" class="btn primary">
+        Generate QR
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
