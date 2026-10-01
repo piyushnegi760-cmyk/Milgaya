@@ -1,71 +1,939 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApniFind - Lost & Found Smart Tag</title>
-    <!-- Tailwind CSS for Beautiful UI -->
-    <script src="https://jsdelivr.net"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>Milgaya — Smart QR Lost & Found</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      color:#fff;
+      background:
+        radial-gradient(circle at 10% 10%,rgba(6,182,212,.15),transparent 28%),
+        radial-gradient(circle at 90% 10%,rgba(37,99,235,.16),transparent 30%),
+        #06101c;
+      min-height:100vh;
+    }
+
+    .glass{
+      background:rgba(8,22,38,.75);
+      border:1px solid rgba(148,163,184,.15);
+      backdrop-filter:blur(18px);
+      box-shadow:0 25px 80px rgba(0,0,0,.3);
+    }
+
+    .btn{
+      background:linear-gradient(135deg,#06b6d4,#2563eb);
+      transition:.25s;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 15px 35px rgba(37,99,235,.3);
+    }
+
+    .success{
+      animation:pop .4s ease;
+    }
+
+    @keyframes pop{
+      from{opacity:0;transform:scale(.8)}
+      to{opacity:1;transform:scale(1)}
+    }
+
+    .loader{
+      width:35px;
+      height:35px;
+      border:3px solid #334155;
+      border-top-color:#22d3ee;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+  </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900 flex flex-col min-h-screen justify-center items-center p-4">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-6 border border-gray-100 text-center">
-        <!-- Logo / Header -->
-        <h1 class="text-3xl font-black text-indigo-600 tracking-tight">ApniFind 🔍</h1>
-        <p class="text-gray-500 text-sm mt-1">स्मार्ट लॉस्ट एंड फाउंड नेटवर्क</p>
-        
-        <div class="my-6 border-b border-gray-100"></div>
+<body>
 
-        <!-- यह सेक्शन तब दिखेगा जब कोई QR स्कैन करेगा -->
-        <div id="finder-section">
-            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                💼
-            </div>
-            <h2 class="text-xl font-bold mb-2 text-gray-800">क्या आपको यह सामान मिला है?</h2>
-            <p class="text-gray-600 text-sm mb-6 px-4">यह सामान किसी का गुम हो गया है। कृपया नीचे दिए बटन पर क्लिक करके सीधे मालिक को सुरक्षित संदेश भेजें।</p>
-            
-            <!-- WhatsApp API Redirect Button -->
-            <button onclick="contactOwner()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2">
-                💬 मालिक से व्हाट्सएप पर बात करें
-            </button>
-        </div>
+<div class="max-w-md mx-auto px-5 py-8">
 
-        <!-- यह सेक्शन मालिक के लिए टैग एक्टिवेट करने का है (भविष्य के लिए) -->
-        <div id="owner-setup-section" class="hidden mt-4">
-            <h2 class="text-lg font-bold mb-2">अपना स्मार्ट टैग एक्टिवेट करें</h2>
-            <input type="text" id="owner-name" placeholder="आपका नाम" class="w-full p-3 border border-gray-200 rounded-xl mb-3 focus:outline-indigo-500">
-            <input type="tel" id="owner-phone" placeholder="WhatsApp नंबर (With Country Code e.g. 919876543210)" class="w-full p-3 border border-gray-200 rounded-xl mb-4 focus:outline-indigo-500">
-            <button onclick="saveOwnerDetails()" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl">टैग एक्टिवेट करें</button>
-        </div>
+  <!-- BRAND -->
+  <div class="text-center mb-8">
 
-        <div class="mt-6 text-xs text-gray-400">
-            Tag ID: <span id="tag-id" class="font-mono font-bold text-gray-600">लोड हो रहा है...</span>
-        </div>
+    <div class="mx-auto w-16 h-16 rounded-2xl
+                bg-gradient-to-br from-cyan-400 to-blue-600
+                flex items-center justify-center text-3xl shadow-xl">
+      🔎
     </div>
 
-    <script>
-        // 1. URL से यूनिक Tag ID निकालना (e.g., ://website.com)
-        const urlParams = new URLSearchParams(window.location.search);
-        let tagId = urlParams.get('id');
-        
-        if (!tagId) {
-            // अगर कोई ID नहीं है तो टेस्टिंग के लिए एक रैंडम ID दे देते हैं
-            tagId = "DEMO-" + Math.floor(1000 + Math.random() * 9000);
-        }
-        document.getElementById('tag-id').innerText = tagId;
+    <h1 class="text-3xl font-black mt-4">
+      Milgaya
+    </h1>
 
-        // 2. डेमो डेटाबेस (शुरुआत के लिए हम हार्डकोडेड नंबर रख रहे हैं)
-        // जब आप लाइव करेंगे, तो यहाँ आपका असली नंबर होगा जहाँ अलर्ट जाएगा
-        const OWNER_WHATSAPP = "91XXXXXXXXXX"; // <-- यहाँ अपना कंट्री कोड के साथ व्हाट्सएप नंबर डालें (बिना + के, जैसे 91987654321)
+    <p class="text-slate-400 text-sm">
+      Smart QR Lost & Found
+    </p>
 
-        function contactOwner() {
-            // ढूंढने वाले के फोन से सीधे मालिक को जाने वाला ऑटोमैटिक मैसेज
-            const textMessage = `नमस्ते, मुझे आपका एक सामान मिला है जिसका ApniFind Tag ID [ ${tagId} ] है। कृपया मुझसे यहाँ संपर्क करें।`;
-            const whatsappUrl = `https://wa.me{OWNER_WHATSAPP}?text=${encodeURIComponent(textMessage)}`;
-            
-            // व्हाट्सएप पर रीडायरेक्ट करना
-            window.location.href = whatsappUrl;
+  </div>
+
+
+  <!-- LOADING -->
+  <div id="loading" class="glass rounded-3xl p-8 text-center">
+
+    <div class="loader mx-auto"></div>
+
+    <p class="text-slate-400 mt-4">
+      Checking Milgaya tag...
+    </p>
+
+  </div>
+
+
+  <!-- OWNER -->
+  <div id="owner" class="hidden glass rounded-3xl p-6">
+
+    <div class="mb-6">
+
+      <span class="text-xs font-bold text-cyan-400">
+        OWNER ACTIVATION
+      </span>
+
+      <h2 class="text-2xl font-black mt-2">
+        Activate your Milgaya Tag
+      </h2>
+
+      <p class="text-sm text-slate-400 mt-2">
+        Add your contact details so a finder can return your item.
+      </p>
+
+    </div>
+
+
+    <form id="ownerForm" class="space-y-4">
+
+      <div>
+
+        <label class="text-sm text-slate-300">
+          Name
+        </label>
+
+        <input
+          id="name"
+          required
+          maxlength="80"
+          placeholder="Your name"
+          class="w-full mt-2 bg-slate-950 border border-slate-700
+                 rounded-xl px-4 py-3 outline-none
+                 focus:border-cyan-400">
+
+      </div>
+
+
+      <div>
+
+        <label class="text-sm text-slate-300">
+          WhatsApp Number
+        </label>
+
+        <input
+          id="whatsapp"
+          required
+          type="tel"
+          placeholder="+919876543210"
+          class="w-full mt-2 bg-slate-950 border border-slate-700
+                 rounded-xl px-4 py-3 outline-none
+                 focus:border-cyan-400">
+
+      </div>
+
+
+      <div>
+
+        <label class="text-sm text-slate-300">
+          Alternative Contact Number
+        </label>
+
+        <input
+          id="alternate"
+          type="tel"
+          placeholder="+919876543210"
+          class="w-full mt-2 bg-slate-950 border border-slate-700
+                 rounded-xl px-4 py-3 outline-none
+                 focus:border-cyan-400">
+
+      </div>
+
+
+      <label class="flex gap-3 text-xs text-slate-400">
+
+        <input
+          id="ownerConsent"
+          type="checkbox"
+          required
+          class="mt-1">
+
+        <span>
+          I agree to let Milgaya use these details to help return
+          my lost item.
+        </span>
+
+      </label>
+
+
+      <button
+        id="activateButton"
+        class="btn w-full py-4 rounded-xl font-black">
+
+        Activate Tag
+
+      </button>
+
+      <p
+        id="ownerError"
+        class="hidden text-sm text-red-300 bg-red-500/10
+               rounded-xl p-3">
+      </p>
+
+    </form>
+
+
+    <!-- SUCCESS -->
+
+    <div id="ownerSuccess"
+         class="hidden success text-center py-8">
+
+      <div class="text-6xl">
+        ✅
+      </div>
+
+      <h2 class="text-2xl font-black mt-4">
+        Tag Activated
+      </h2>
+
+      <p class="text-slate-400 mt-2">
+        Your Milgaya tag is now active.
+      </p>
+
+      <p class="text-xs text-slate-500 mt-4">
+        Someone who finds your item can now contact you.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- FINDER -->
+
+  <div id="finder" class="hidden glass rounded-3xl p-6">
+
+    <div class="text-center">
+
+      <div class="mx-auto w-20 h-20 rounded-full
+                  bg-emerald-500/10
+                  flex items-center justify-center text-4xl">
+        🎒
+      </div>
+
+      <h2 class="text-2xl font-black mt-5">
+        You found a Milgaya item
+      </h2>
+
+      <p class="text-slate-400 text-sm mt-2">
+        Thank you for helping return it to its owner.
+      </p>
+
+    </div>
+
+
+    <!-- REGISTERED -->
+
+    <div id="registered" class="hidden mt-6">
+
+      <div class="rounded-2xl bg-emerald-500/10
+                  border border-emerald-500/20 p-4">
+
+        <p class="font-bold text-emerald-300">
+          ✓ Tag is activated
+        </p>
+
+        <p class="text-sm text-slate-400 mt-1">
+          You can contact the owner securely through WhatsApp.
+        </p>
+
+      </div>
+
+
+      <button
+        id="whatsappButton"
+        class="w-full mt-5 py-4 rounded-xl
+               bg-emerald-500 text-slate-950
+               font-black hover:bg-emerald-400">
+
+        💬 Contact Owner via WhatsApp
+
+      </button>
+
+
+      <!-- OPTIONAL LOCATION -->
+
+      <div class="mt-5 p-4 rounded-2xl
+                  bg-blue-500/10
+                  border border-blue-500/20">
+
+        <p class="font-bold text-blue-300">
+          📍 Help locate the item
+        </p>
+
+        <p class="text-xs text-slate-400 mt-1">
+          If you want, share your approximate location with
+          the owner. Your browser will ask for permission.
+        </p>
+
+        <button
+          id="locationButton"
+          class="mt-3 w-full py-3 rounded-xl
+                 bg-blue-500/20 text-blue-300
+                 font-bold">
+
+          Share My Location
+
+        </button>
+
+        <p
+          id="locationStatus"
+          class="text-xs text-slate-500 mt-2">
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- NOT ACTIVE -->
+
+    <div id="notRegistered" class="hidden mt-6">
+
+      <div class="rounded-2xl
+                  bg-amber-500/10
+                  border border-amber-500/20
+                  p-5 text-center">
+
+        <div class="text-4xl">
+          ⏳
+        </div>
+
+        <h3 class="font-bold mt-3">
+          Tag not activated
+        </h3>
+
+        <p class="text-sm text-slate-400 mt-2">
+          This tag has not been activated by the owner yet.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div
+      id="finderError"
+      class="hidden mt-5 p-4 rounded-xl
+             bg-red-500/10
+             border border-red-500/20
+             text-sm text-red-300">
+    </div>
+
+
+    <div class="text-center text-xs text-slate-600 mt-6">
+      Tag ID:
+      <span id="tagText">—</span>
+    </div>
+
+  </div>
+
+
+  <footer class="text-center text-xs text-slate-600 mt-8">
+    © <span id="year"></span> Milgaya
+  </footer>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   MILGAYA CONFIGURATION
+   ============================================================
+
+   After creating Supabase:
+
+   SUPABASE_URL:
+   https://xxxxxxxx.supabase.co
+
+   SUPABASE_ANON_KEY:
+   your publishable/anon key
+
+   NEVER put the service_role key here.
+============================================================ */
+
+const SUPABASE_URL =
+  "YOUR_SUPABASE_URL";
+
+const SUPABASE_ANON_KEY =
+  "YOUR_SUPABASE_ANON_KEY";
+
+
+/* SUPABASE */
+
+const supabaseConfigured =
+  SUPABASE_URL.startsWith("https://") &&
+  !SUPABASE_URL.includes("YOUR_") &&
+  !SUPABASE_ANON_KEY.includes("YOUR_");
+
+const db = supabaseConfigured
+  ? window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    )
+  : null;
+
+
+/* ELEMENTS */
+
+const loading =
+  document.getElementById("loading");
+
+const owner =
+  document.getElementById("owner");
+
+const finder =
+  document.getElementById("finder");
+
+const ownerForm =
+  document.getElementById("ownerForm");
+
+const ownerError =
+  document.getElementById("ownerError");
+
+const finderError =
+  document.getElementById("finderError");
+
+
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+
+/* HELPERS */
+
+function normalizeTag(value){
+
+  return (value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9_-]/g,"")
+    .slice(0,64);
+
+}
+
+
+function normalizePhone(value){
+
+  return (value || "")
+    .replace(/[^\d+]/g,"")
+    .trim();
+
+}
+
+
+function getURLData(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  return {
+
+    setup:
+      normalizeTag(
+        params.get("setup")
+      ),
+
+    setupKey:
+      params.get("key") || "",
+
+    tag:
+      normalizeTag(
+        params.get("tag")
+      )
+
+  };
+
+}
+
+
+function showOwner(){
+
+  loading.classList.add("hidden");
+  finder.classList.add("hidden");
+  owner.classList.remove("hidden");
+
+}
+
+
+function showFinder(){
+
+  loading.classList.add("hidden");
+  owner.classList.add("hidden");
+  finder.classList.remove("hidden");
+
+}
+
+
+/* ============================================================
+   OWNER ACTIVATION
+============================================================ */
+
+async function activateTag(){
+
+  const {
+    setup,
+    setupKey
+  } = getURLData();
+
+
+  if(!setup || !setupKey){
+
+    ownerError.textContent =
+      "Invalid activation link.";
+
+    ownerError.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  const name =
+    document
+      .getElementById("name")
+      .value
+      .trim();
+
+
+  const whatsapp =
+    normalizePhone(
+      document
+        .getElementById("whatsapp")
+        .value
+    );
+
+
+  const alternate =
+    normalizePhone(
+      document
+        .getElementById("alternate")
+        .value
+    );
+
+
+  if(name.length < 2){
+
+    ownerError.textContent =
+      "Please enter your name.";
+
+    ownerError.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  if(!/^\+?\d{10,15}$/.test(whatsapp)){
+
+    ownerError.textContent =
+      "Enter a valid WhatsApp number with country code.";
+
+    ownerError.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "activateButton"
+    );
+
+
+  button.disabled = true;
+  button.textContent =
+    "Activating...";
+
+
+  try{
+
+    const { data,error } =
+      await db.rpc(
+        "activate_milgaya_tag",
+        {
+          p_tag_id: setup,
+          p_setup_key: setupKey,
+          p_owner_name: name,
+          p_alt_phone:
+            alternate || null,
+          p_whatsapp: whatsapp
         }
-    </script>
+      );
+
+
+    if(error)
+      throw error;
+
+
+    if(data !== true){
+
+      throw new Error(
+        "Invalid setup key or tag already activated."
+      );
+
+    }
+
+
+    ownerForm.classList.add("hidden");
+
+    document
+      .getElementById("ownerSuccess")
+      .classList.remove("hidden");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    ownerError.textContent =
+      "Activation failed. Check your activation link or contact support.";
+
+    ownerError.classList.remove("hidden");
+
+    button.disabled = false;
+    button.textContent =
+      "Activate Tag";
+
+  }
+
+}
+
+
+ownerForm.addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+    await activateTag();
+
+  }
+);
+
+
+/* ============================================================
+   FINDER
+============================================================ */
+
+async function loadFinder(){
+
+  const {
+    tag
+  } = getURLData();
+
+
+  showFinder();
+
+
+  document
+    .getElementById("tagText")
+    .textContent =
+      tag || "UNKNOWN";
+
+
+  if(!tag){
+
+    finderError.textContent =
+      "Invalid Milgaya QR link.";
+
+    finderError.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+      Only public RPC result is returned.
+      Owner name and alternate number are NOT exposed.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        "get_milgaya_contact",
+        {
+          p_tag_id: tag
+        }
+      );
+
+
+    if(error)
+      throw error;
+
+
+    /*
+      Scan timestamp is logged automatically.
+      No IP address or precise location is collected.
+    */
+
+    await db.rpc(
+      "log_milgaya_scan",
+      {
+        p_tag_id: tag
+      }
+    );
+
+
+    if(
+      !data ||
+      data.length === 0 ||
+      !data[0].whatsapp
+    ){
+
+      document
+        .getElementById("notRegistered")
+        .classList.remove("hidden");
+
+      return;
+
+    }
+
+
+    document
+      .getElementById("registered")
+      .classList.remove("hidden");
+
+
+    /*
+      WhatsApp stays in JavaScript memory.
+      It is not displayed as text.
+    */
+
+    const whatsapp =
+      data[0].whatsapp;
+
+
+    document
+      .getElementById("whatsappButton")
+      .addEventListener(
+        "click",
+        function(){
+
+          const number =
+            whatsapp.replace(/\D/g,"");
+
+
+          const message =
+            `Hello, I found your lost item with Milgaya Tag ID ${tag}. ` +
+            `I would like to help return it to you.`;
+
+
+          const url =
+            "https://wa.me/" +
+            number +
+            "?text=" +
+            encodeURIComponent(message);
+
+
+          window.location.href = url;
+
+        }
+      );
+
+
+    /*
+      LOCATION BUTTON
+    */
+
+    document
+      .getElementById("locationButton")
+      .addEventListener(
+        "click",
+        function(){
+
+          shareLocation(tag);
+
+        }
+      );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    finderError.textContent =
+      "Unable to check this tag right now. Please try again.";
+
+    finderError.classList.remove("hidden");
+
+  }
+
+}
+
+
+/* ============================================================
+   FINDER LOCATION — EXPLICIT USER CONSENT
+============================================================ */
+
+function shareLocation(tag){
+
+  const status =
+    document.getElementById(
+      "locationStatus"
+    );
+
+
+  if(!navigator.geolocation){
+
+    status.textContent =
+      "Location is not supported by this browser.";
+
+    return;
+
+  }
+
+
+  status.textContent =
+    "Requesting location permission...";
+
+
+  navigator.geolocation.getCurrentPosition(
+
+    async function(position){
+
+      const latitude =
+        position.coords.latitude;
+
+      const longitude =
+        position.coords.longitude;
+
+
+      try{
+
+        const {error} =
+          await db.rpc(
+            "save_milgaya_location",
+            {
+              p_tag_id: tag,
+              p_latitude: latitude,
+              p_longitude: longitude
+            }
+          );
+
+
+        if(error)
+          throw error;
+
+
+        status.textContent =
+          "✓ Location shared successfully.";
+
+      }catch(error){
+
+        console.error(error);
+
+        status.textContent =
+          "Could not save the location.";
+
+      }
+
+    },
+
+    function(){
+
+      status.textContent =
+        "Location permission was not granted.";
+
+    },
+
+    {
+      enableHighAccuracy:false,
+      timeout:10000,
+      maximumAge:300000
+    }
+
+  );
+
+}
+
+
+/* ============================================================
+   BOOT
+============================================================ */
+
+async function boot(){
+
+  if(!supabaseConfigured){
+
+    loading.classList.add("hidden");
+
+    showFinder();
+
+    finderError.textContent =
+      "Supabase is not connected yet. Add your Supabase URL and publishable/anon key in this file.";
+
+    finderError.classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  const {
+    setup
+  } = getURLData();
+
+
+  if(setup){
+
+    showOwner();
+
+  }else{
+
+    await loadFinder();
+
+  }
+
+}
+
+
+boot();
+
+</script>
+
 </body>
 </html>
