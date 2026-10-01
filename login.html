@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Milgaya</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+
+<div class="auth-box">
+
+  <a href="index.html" class="logo">Mil<span>gaya</span></a>
+
+  <h1>Welcome</h1>
+
+  <p class="muted">
+    Login to manage your Milgaya QR codes.
+  </p>
+
+  <form id="loginForm">
+
+    <label>Email</label>
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Enter your email"
+      required
+    >
+
+    <label>Password</label>
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Enter your password"
+      required
+    >
+
+    <button class="btn primary full" type="submit">
+      Login
+    </button>
+
+  </form>
+
+  <div class="divider">OR</div>
+
+  <button class="social-btn" onclick="googleLogin()">
+    Continue with Google
+  </button>
+
+  <p class="auth-bottom">
+    Don't have an account?
+    <a href="signup.html">Create Account</a>
+  </p>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
