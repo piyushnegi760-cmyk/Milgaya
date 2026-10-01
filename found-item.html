@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I Found This Item — Milgaya</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+
+<div class="auth-box">
+
+  <a href="index.html" class="logo">Mil<span>gaya</span></a>
+
+  <h1>I Found This Item</h1>
+
+  <p class="muted">
+    Leave your contact details so the owner can get in touch.
+  </p>
+
+
+  <form id="foundForm">
+
+    <label>Your Name</label>
+
+    <input
+      type="text"
+      id="finderName"
+      placeholder="Enter your name"
+      required
+    >
+
+
+    <label>Phone / Email</label>
+
+    <input
+      type="text"
+      id="finderContact"
+      placeholder="How can the owner contact you?"
+      required
+    >
+
+
+    <label>Message</label>
+
+    <textarea
+      id="finderMessage"
+      placeholder="Tell the owner where you found the item..."
+      required
+    ></textarea>
+
+
+    <button
+      class="btn primary full"
+      type="submit"
+    >
+      Send to Owner
+    </button>
+
+  </form>
+
+  <p id="foundMessage" class="form-message"></p>
+
+</div>
+
+<script src="js/finder.js"></script>
+
+</body>
+</html>
