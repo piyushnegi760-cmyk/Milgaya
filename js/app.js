@@ -1,0 +1,1 @@
+console.log("Milgaya frontend loaded.");
