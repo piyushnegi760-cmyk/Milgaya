@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate QR — Milgaya</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+  <a href="index.html" class="logo">Mil<span>gaya</span></a>
+
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="my-qr.html">My QR</a>
+  </nav>
+
+</header>
+
+
+<main class="form-page">
+
+  <div class="form-card">
+
+    <span class="small-label">CREATE QR</span>
+
+    <h1>Generate your QR</h1>
+
+    <p class="muted">
+      This QR will later be connected to your Milgaya account.
+    </p>
+
+
+    <label>Number of QR codes</label>
+
+    <input
+      type="number"
+      id="quantity"
+      value="1"
+      min="1"
+      max="100"
+      oninput="calculateTotal()"
+    >
+
+
+    <label>Message for finder</label>
+
+    <textarea
+      id="message"
+      maxlength="250"
+      placeholder="Example: Please contact me if you find this item."
+    ></textarea>
+
+
+    <div class="total-box">
+
+      <span>Total</span>
+
+      <strong id="total">
+        ₹25
+      </strong>
+
+    </div>
+
+
+    <button
+      class="btn primary full"
+      onclick="prepareQR()"
+    >
+      Continue
+    </button>
+
+    <p id="qrMessage" class="form-message"></p>
+
+  </div>
+
+</main>
+
+<script src="js/qr.js"></script>
+
+</body>
+</html>
