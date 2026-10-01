@@ -1,1116 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Milgaya — Smart QR Lost & Found</title>
+  <title>Milgaya - Login</title>
 
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     body {
-      font-family: Inter, Arial, sans-serif;
-      background: #f7f8fa;
+      background:
+        radial-gradient(circle at top left, #dbeafe, transparent 35%),
+        radial-gradient(circle at bottom right, #fef3c7, transparent 35%),
+        #f8fafc;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
-    .card {
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.07);
-    }
-
-    input, textarea {
-      outline: none;
-    }
-
-    input:focus, textarea:focus {
-      border-color: #111827;
+    .glass {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen flex items-center justify-center px-4">
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
+  <div class="w-full max-w-md">
 
-<header class="bg-black text-white">
-  <div class="max-w-6xl mx-auto px-5 py-5 flex justify-between items-center">
-
-    <div class="text-2xl font-black">
-      Milgaya<span class="text-yellow-400">.</span>
-    </div>
-
-    <div id="headerUser" class="hidden items-center gap-3">
-      <span id="userEmail" class="text-sm text-gray-300"></span>
-
-      <button
-        onclick="logout()"
-        class="bg-white text-black px-4 py-2 rounded-xl font-semibold">
-        Logout
-      </button>
-    </div>
-
-  </div>
-</header>
-
-
-<!-- =========================================================
-     AUTH SECTION
-========================================================= -->
-
-<section id="authSection" class="min-h-screen flex items-center justify-center px-5 py-12">
-
-  <div class="card w-full max-w-md p-7">
-
-    <div class="text-center mb-7">
-      <div class="text-4xl font-black mb-2">
-        Milgaya<span class="text-yellow-500">.</span>
+    <!-- LOGO -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl
+        bg-black text-white text-2xl font-bold shadow-xl mb-4">
+        M
       </div>
 
-      <p class="text-gray-500">
-        Smart QR for your belongings
-      </p>
-    </div>
-
-
-    <!-- AUTH TABS -->
-
-    <div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl mb-6">
-
-      <button
-        id="loginTab"
-        onclick="showAuthMode('login')"
-        class="py-3 rounded-lg bg-white font-semibold">
-        Login
-      </button>
-
-      <button
-        id="signupTab"
-        onclick="showAuthMode('signup')"
-        class="py-3 rounded-lg font-semibold text-gray-500">
-        Sign Up
-      </button>
-
-    </div>
-
-
-    <!-- LOGIN -->
-
-    <div id="loginBox">
-
-      <label class="block text-sm font-semibold mb-2">
-        Email
-      </label>
-
-      <input
-        id="loginEmail"
-        type="email"
-        placeholder="you@example.com"
-        class="w-full border rounded-xl px-4 py-3 mb-4">
-
-      <label class="block text-sm font-semibold mb-2">
-        Password
-      </label>
-
-      <input
-        id="loginPassword"
-        type="password"
-        placeholder="••••••••"
-        class="w-full border rounded-xl px-4 py-3 mb-3">
-
-      <button
-        onclick="loginEmailPassword()"
-        class="w-full bg-black text-white py-3 rounded-xl font-bold">
-        Login
-      </button>
-
-      <button
-        onclick="forgotPassword()"
-        class="w-full text-sm text-gray-600 mt-4">
-        Forgot password?
-      </button>
-
-    </div>
-
-
-    <!-- SIGNUP -->
-
-    <div id="signupBox" class="hidden">
-
-      <label class="block text-sm font-semibold mb-2">
-        Email
-      </label>
-
-      <input
-        id="signupEmail"
-        type="email"
-        placeholder="you@example.com"
-        class="w-full border rounded-xl px-4 py-3 mb-4">
-
-      <label class="block text-sm font-semibold mb-2">
-        Password
-      </label>
-
-      <input
-        id="signupPassword"
-        type="password"
-        placeholder="Minimum 6 characters"
-        class="w-full border rounded-xl px-4 py-3 mb-4">
-
-      <button
-        onclick="signupEmailPassword()"
-        class="w-full bg-black text-white py-3 rounded-xl font-bold">
-        Create Account
-      </button>
-
-    </div>
-
-
-    <div class="flex items-center gap-3 my-6">
-      <div class="h-px bg-gray-200 flex-1"></div>
-      <span class="text-gray-400 text-sm">OR</span>
-      <div class="h-px bg-gray-200 flex-1"></div>
-    </div>
-
-
-    <!-- GOOGLE -->
-
-    <button
-      onclick="googleLogin()"
-      class="w-full border py-3 rounded-xl font-semibold bg-white">
-      Continue with Google
-    </button>
-
-
-    <!-- PHONE OTP -->
-
-    <div class="mt-5">
-
-      <button
-        onclick="showPhoneLogin()"
-        class="w-full border py-3 rounded-xl font-semibold">
-        Login with Phone OTP
-      </button>
-
-    </div>
-
-
-    <div id="phoneBox" class="hidden mt-5">
-
-      <input
-        id="phoneNumber"
-        type="tel"
-        placeholder="+91XXXXXXXXXX"
-        class="w-full border rounded-xl px-4 py-3 mb-3">
-
-      <button
-        onclick="sendPhoneOTP()"
-        class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold">
-        Send OTP
-      </button>
-
-      <input
-        id="phoneOTP"
-        type="text"
-        placeholder="Enter OTP"
-        class="w-full border rounded-xl px-4 py-3 mt-3">
-
-      <button
-        onclick="verifyPhoneOTP()"
-        class="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold mt-3">
-        Verify OTP
-      </button>
-
-    </div>
-
-    <p id="authMessage" class="text-center text-sm mt-5"></p>
-
-  </div>
-
-</section>
-
-
-<!-- =========================================================
-     DASHBOARD
-========================================================= -->
-
-<section id="dashboardSection" class="hidden">
-
-  <main class="max-w-6xl mx-auto px-5 py-10">
-
-    <div class="mb-10">
-      <p class="text-gray-500">
-        Welcome to Milgaya
-      </p>
-
-      <h1 class="text-4xl font-black mt-1">
-        Your QR Dashboard
+      <h1 class="text-3xl font-extrabold text-gray-900">
+        Milgaya
       </h1>
-    </div>
 
-
-    <!-- CREATE QR CARD -->
-
-    <div class="card p-7 mb-10">
-
-      <h2 class="text-2xl font-black mb-2">
-        Create New QR
-      </h2>
-
-      <p class="text-gray-500 mb-7">
-        Create a QR code and attach it to your belongings.
+      <p class="text-gray-500 mt-2">
+        Smart QR Lost & Found
       </p>
-
-
-      <div class="grid md:grid-cols-2 gap-6">
-
-        <!-- MESSAGE -->
-
-        <div>
-
-          <label class="block font-bold mb-2">
-            Your message
-          </label>
-
-          <textarea
-            id="qrMessage"
-            rows="7"
-            maxlength="300"
-            placeholder="Example: If you find this item, please scan this QR and contact me."
-            class="w-full border rounded-2xl p-4"></textarea>
-
-          <p class="text-xs text-gray-400 mt-2">
-            Maximum 300 characters
-          </p>
-
-        </div>
-
-
-        <!-- QUANTITY -->
-
-        <div>
-
-          <label class="block font-bold mb-2">
-            Number of QR codes
-          </label>
-
-          <div class="flex items-center gap-3 mb-5">
-
-            <button
-              onclick="changeQty(-1)"
-              class="w-12 h-12 bg-gray-100 rounded-xl text-xl font-bold">
-              −
-            </button>
-
-            <input
-              id="quantity"
-              type="number"
-              value="1"
-              min="1"
-              max="100"
-              oninput="updatePrice()"
-              class="w-24 h-12 border rounded-xl text-center font-bold">
-
-            <button
-              onclick="changeQty(1)"
-              class="w-12 h-12 bg-gray-100 rounded-xl text-xl font-bold">
-              +
-            </button>
-
-          </div>
-
-
-          <div class="bg-gray-100 rounded-2xl p-5">
-
-            <div class="flex justify-between mb-2">
-              <span>Price per QR</span>
-              <b>₹50</b>
-            </div>
-
-            <div class="flex justify-between text-xl">
-              <span>Total</span>
-              <b id="totalPrice">₹50</b>
-            </div>
-
-          </div>
-
-
-          <button
-            onclick="startPayment()"
-            class="w-full bg-black text-white py-4 rounded-2xl font-bold mt-5">
-            Pay & Generate QR
-          </button>
-
-        </div>
-
-      </div>
-
     </div>
 
 
-    <!-- QR LIST -->
+    <!-- AUTH CARD -->
+    <div class="glass rounded-3xl shadow-2xl border border-white p-7">
 
-    <div>
-
-      <div class="flex justify-between items-center mb-5">
-
-        <h2 class="text-2xl font-black">
-          My QR Codes
-        </h2>
+      <!-- LOGIN / SIGNUP TABS -->
+      <div class="flex bg-gray-100 rounded-xl p-1 mb-7">
 
         <button
-          onclick="loadMyQRs()"
-          class="text-sm font-semibold">
-          Refresh
+          id="loginTab"
+          onclick="showLogin()"
+          class="w-1/2 py-2.5 rounded-lg bg-white shadow font-semibold text-gray-900">
+          Login
+        </button>
+
+        <button
+          id="signupTab"
+          onclick="showSignup()"
+          class="w-1/2 py-2.5 rounded-lg font-semibold text-gray-500">
+          Sign Up
         </button>
 
       </div>
 
-      <div
-        id="qrList"
-        class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-      </div>
 
-    </div>
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
 
-  </main>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">
+          Welcome back 👋
+        </h2>
 
-</section>
+        <p class="text-gray-500 text-sm mb-6">
+          Login to your Milgaya account
+        </p>
 
 
-<!-- =========================================================
-     FINDER PAGE
-========================================================= -->
+        <label class="text-sm font-semibold text-gray-700">
+          Email
+        </label>
 
-<section id="finderSection" class="hidden min-h-screen px-5 py-12">
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="you@example.com"
+          class="w-full mt-2 mb-4 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
 
-  <div class="max-w-md mx-auto">
 
-    <div class="card p-7 text-center">
+        <label class="text-sm font-semibold text-gray-700">
+          Password
+        </label>
 
-      <div class="text-3xl font-black mb-2">
-        Milgaya<span class="text-yellow-500">.</span>
-      </div>
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="••••••••"
+          class="w-full mt-2 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
 
-      <p class="text-gray-500 mb-7">
-        You've scanned a Milgaya QR.
-      </p>
 
-      <div id="finderLoading">
-        Loading...
-      </div>
-
-      <div id="finderResult" class="hidden">
-
-        <div class="bg-gray-100 rounded-2xl p-5 text-left">
-
-          <p class="text-xs text-gray-400 mb-2">
-            OWNER MESSAGE
-          </p>
-
-          <p
-            id="finderMessage"
-            class="font-semibold">
-          </p>
-
+        <div class="text-right mt-2 mb-5">
+          <button
+            onclick="forgotPassword()"
+            class="text-sm font-semibold text-blue-600 hover:underline">
+            Forgot Password?
+          </button>
         </div>
 
-        <a
-          id="whatsappButton"
-          target="_blank"
-          class="block bg-green-500 text-white py-4 rounded-2xl font-bold mt-5">
-          💬 Contact Owner on WhatsApp
-        </a>
 
-        <p class="text-xs text-gray-400 mt-5">
-          Owner's phone number is not displayed publicly.
-        </p>
+        <button
+          onclick="loginUser()"
+          id="loginButton"
+          class="w-full bg-black text-white py-3.5 rounded-xl
+          font-bold hover:bg-gray-800 transition">
+          Login
+        </button>
 
       </div>
 
-      <div id="finderNotFound" class="hidden">
 
-        <p class="font-bold">
-          This QR is not active.
+      <!-- SIGN UP FORM -->
+      <div id="signupForm" class="hidden">
+
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">
+          Create account 🚀
+        </h2>
+
+        <p class="text-gray-500 text-sm mb-6">
+          Create your Milgaya account
         </p>
 
-        <p class="text-gray-500 mt-2">
-          Please try again later.
-        </p>
 
+        <label class="text-sm font-semibold text-gray-700">
+          Full Name
+        </label>
+
+        <input
+          id="signupName"
+          type="text"
+          placeholder="Your name"
+          class="w-full mt-2 mb-4 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
+
+
+        <label class="text-sm font-semibold text-gray-700">
+          Email
+        </label>
+
+        <input
+          id="signupEmail"
+          type="email"
+          placeholder="you@example.com"
+          class="w-full mt-2 mb-4 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
+
+
+        <label class="text-sm font-semibold text-gray-700">
+          Password
+        </label>
+
+        <input
+          id="signupPassword"
+          type="password"
+          placeholder="Minimum 6 characters"
+          class="w-full mt-2 mb-4 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
+
+
+        <label class="text-sm font-semibold text-gray-700">
+          Confirm Password
+        </label>
+
+        <input
+          id="signupConfirmPassword"
+          type="password"
+          placeholder="Repeat password"
+          class="w-full mt-2 mb-5 px-4 py-3 rounded-xl border border-gray-200
+          outline-none focus:ring-2 focus:ring-black"
+        />
+
+
+        <button
+          onclick="signupUser()"
+          id="signupButton"
+          class="w-full bg-black text-white py-3.5 rounded-xl
+          font-bold hover:bg-gray-800 transition">
+          Create Account
+        </button>
+
+      </div>
+
+
+      <!-- MESSAGE -->
+      <div
+        id="message"
+        class="hidden mt-5 p-3 rounded-xl text-sm text-center">
       </div>
 
     </div>
 
-  </div>
 
-</section>
-
-
-<!-- =========================================================
-     PAYMENT MODAL
-========================================================= -->
-
-<div
-  id="paymentLoading"
-  class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center px-5">
-
-  <div class="bg-white rounded-2xl p-7 text-center">
-
-    <div class="font-bold">
-      Creating secure payment...
-    </div>
-
-    <div class="text-gray-500 text-sm mt-2">
-      Please wait.
-    </div>
+    <!-- FOOTER -->
+    <p class="text-center text-gray-400 text-xs mt-6">
+      © 2026 Milgaya. Smart Lost & Found.
+    </p>
 
   </div>
-
-</div>
 
 
 <script>
 
-/* =========================================================
-   CONFIG
-========================================================= */
+  // =====================================================
+  // SUPABASE CONFIG
+  // =====================================================
 
-const SUPABASE_URL = "YOUR_SUPABASE_URL";
+  const SUPABASE_URL = "YOUR_SUPABASE_URL";
 
-const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
-
-const RAZORPAY_KEY_ID = "YOUR_RAZORPAY_KEY_ID";
+  const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
 
-const { createClient } = supabase;
+  const { createClient } = supabase;
 
-const db = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-const PRICE_PER_QR = 50;
-
-let currentUser = null;
+  const supabaseClient = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 
-/* =========================================================
-   INIT
-========================================================= */
+  // =====================================================
+  // UI
+  // =====================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
+  function showMessage(message, type = "success") {
 
-  const params = new URLSearchParams(window.location.search);
+    const box = document.getElementById("message");
 
-  const qrToken = params.get("qr");
+    box.innerText = message;
 
-  if (qrToken) {
-    showFinderPage(qrToken);
-    return;
-  }
+    box.classList.remove(
+      "hidden",
+      "bg-green-100",
+      "text-green-700",
+      "bg-red-100",
+      "text-red-700"
+    );
 
-  const {
-    data: {
-      session
+    if (type === "success") {
+
+      box.classList.add(
+        "bg-green-100",
+        "text-green-700"
+      );
+
+    } else {
+
+      box.classList.add(
+        "bg-red-100",
+        "text-red-700"
+      );
+
     }
-  } = await db.auth.getSession();
-
-  if (session) {
-
-    currentUser = session.user;
-
-    showDashboard();
-
-  } else {
-
-    showAuth();
 
   }
 
-});
+
+  function showLogin() {
+
+    document
+      .getElementById("loginForm")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("signupForm")
+      .classList.add("hidden");
 
 
-/* =========================================================
-   AUTH STATE
-========================================================= */
+    document
+      .getElementById("loginTab")
+      .classList.add("bg-white", "shadow", "text-gray-900");
 
-db.auth.onAuthStateChange((event, session) => {
-
-  if (session) {
-
-    currentUser = session.user;
-
-    showDashboard();
-
-  } else {
-
-    currentUser = null;
-
-    showAuth();
-
-  }
-
-});
+    document
+      .getElementById("loginTab")
+      .classList.remove("text-gray-500");
 
 
-/* =========================================================
-   AUTH UI
-========================================================= */
+    document
+      .getElementById("signupTab")
+      .classList.remove("bg-white", "shadow", "text-gray-900");
 
-function showAuth() {
-
-  document
-    .getElementById("authSection")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("dashboardSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("finderSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("headerUser")
-    .classList.add("hidden");
-
-}
-
-
-function showDashboard() {
-
-  document
-    .getElementById("authSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("finderSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("dashboardSection")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("headerUser")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("headerUser")
-    .classList.add("flex");
-
-  document
-    .getElementById("userEmail")
-    .textContent =
-      currentUser?.email ||
-      currentUser?.phone ||
-      "Account";
-
-  loadMyQRs();
-
-}
-
-
-function showAuthMode(mode) {
-
-  const login = document.getElementById("loginBox");
-  const signup = document.getElementById("signupBox");
-
-  const loginTab = document.getElementById("loginTab");
-  const signupTab = document.getElementById("signupTab");
-
-  if (mode === "login") {
-
-    login.classList.remove("hidden");
-    signup.classList.add("hidden");
-
-    loginTab.classList.add("bg-white");
-    signupTab.classList.remove("bg-white");
-
-  } else {
-
-    login.classList.add("hidden");
-    signup.classList.remove("hidden");
-
-    signupTab.classList.add("bg-white");
-    loginTab.classList.remove("bg-white");
+    document
+      .getElementById("signupTab")
+      .classList.add("text-gray-500");
 
   }
 
-}
+
+  function showSignup() {
+
+    document
+      .getElementById("signupForm")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("loginForm")
+      .classList.add("hidden");
 
 
-/* =========================================================
-   EMAIL SIGNUP
-========================================================= */
+    document
+      .getElementById("signupTab")
+      .classList.add("bg-white", "shadow", "text-gray-900");
 
-async function signupEmailPassword() {
+    document
+      .getElementById("signupTab")
+      .classList.remove("text-gray-500");
 
-  const email =
-    document.getElementById("signupEmail").value.trim();
 
-  const password =
-    document.getElementById("signupPassword").value;
+    document
+      .getElementById("loginTab")
+      .classList.remove("bg-white", "shadow", "text-gray-900");
 
-  if (!email || !password) {
+    document
+      .getElementById("loginTab")
+      .classList.add("text-gray-500");
 
-    setAuthMessage("Email and password required.");
-
-    return;
   }
 
-  if (password.length < 6) {
 
-    setAuthMessage("Password must be at least 6 characters.");
+  // =====================================================
+  // SIGN UP
+  // =====================================================
 
-    return;
-  }
+  async function signupUser() {
 
-  const {
-    error
-  } = await db.auth.signUp({
-    email,
-    password
-  });
+    const name =
+      document.getElementById("signupName").value.trim();
 
-  if (error) {
+    const email =
+      document.getElementById("signupEmail").value.trim();
 
-    setAuthMessage(error.message);
+    const password =
+      document.getElementById("signupPassword").value;
 
-    return;
-  }
-
-  setAuthMessage(
-    "Account created. Check your email if confirmation is enabled."
-  );
-
-}
+    const confirmPassword =
+      document.getElementById("signupConfirmPassword").value;
 
 
-/* =========================================================
-   EMAIL LOGIN
-========================================================= */
+    if (!name || !email || !password || !confirmPassword) {
 
-async function loginEmailPassword() {
+      showMessage(
+        "Please fill all fields.",
+        "error"
+      );
 
-  const email =
-    document.getElementById("loginEmail").value.trim();
-
-  const password =
-    document.getElementById("loginPassword").value;
-
-  if (!email || !password) {
-
-    setAuthMessage("Enter email and password.");
-
-    return;
-  }
-
-  const {
-    error
-  } = await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-
-    setAuthMessage(error.message);
-
-    return;
-  }
-
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD
-========================================================= */
-
-async function forgotPassword() {
-
-  const email =
-    document.getElementById("loginEmail").value.trim();
-
-  if (!email) {
-
-    setAuthMessage(
-      "Enter your email first."
-    );
-
-    return;
-  }
-
-  const redirectURL =
-    window.location.origin +
-    window.location.pathname;
-
-  const {
-    error
-  } = await db.auth.resetPasswordForEmail(
-    email,
-    {
-      redirectTo: redirectURL
+      return;
     }
-  );
-
-  if (error) {
-
-    setAuthMessage(error.message);
-
-    return;
-  }
-
-  setAuthMessage(
-    "Password reset email sent."
-  );
-
-}
 
 
-/* =========================================================
-   GOOGLE LOGIN
-========================================================= */
+    if (password.length < 6) {
 
-async function googleLogin() {
+      showMessage(
+        "Password must be at least 6 characters.",
+        "error"
+      );
 
-  const {
-    error
-  } = await db.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo:
-        window.location.origin +
-        window.location.pathname
+      return;
     }
-  });
 
-  if (error) {
 
-    setAuthMessage(error.message);
+    if (password !== confirmPassword) {
 
-  }
+      showMessage(
+        "Passwords do not match.",
+        "error"
+      );
 
-}
-
-
-/* =========================================================
-   PHONE OTP
-========================================================= */
-
-function showPhoneLogin() {
-
-  document
-    .getElementById("phoneBox")
-    .classList.remove("hidden");
-
-}
-
-
-async function sendPhoneOTP() {
-
-  const phone =
-    document
-      .getElementById("phoneNumber")
-      .value
-      .trim();
-
-  if (!phone) {
-
-    setAuthMessage("Enter your phone number.");
-
-    return;
-  }
-
-  const {
-    error
-  } = await db.auth.signInWithOtp({
-    phone
-  });
-
-  if (error) {
-
-    setAuthMessage(error.message);
-
-    return;
-  }
-
-  setAuthMessage(
-    "OTP sent to your phone."
-  );
-
-}
-
-
-async function verifyPhoneOTP() {
-
-  const phone =
-    document
-      .getElementById("phoneNumber")
-      .value
-      .trim();
-
-  const token =
-    document
-      .getElementById("phoneOTP")
-      .value
-      .trim();
-
-  if (!phone || !token) {
-
-    setAuthMessage(
-      "Enter phone number and OTP."
-    );
-
-    return;
-  }
-
-  const {
-    error
-  } = await db.auth.verifyOtp({
-    phone,
-    token,
-    type: "sms"
-  });
-
-  if (error) {
-
-    setAuthMessage(error.message);
-
-    return;
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logout() {
-
-  await db.auth.signOut();
-
-}
-
-
-/* =========================================================
-   AUTH MESSAGE
-========================================================= */
-
-function setAuthMessage(message) {
-
-  document
-    .getElementById("authMessage")
-    .textContent = message;
-
-}
-
-
-/* =========================================================
-   QUANTITY
-========================================================= */
-
-function changeQty(change) {
-
-  const input =
-    document.getElementById("quantity");
-
-  let value =
-    parseInt(input.value || "1", 10);
-
-  value += change;
-
-  if (value < 1) value = 1;
-
-  if (value > 100) value = 100;
-
-  input.value = value;
-
-  updatePrice();
-
-}
-
-
-function updatePrice() {
-
-  const input =
-    document.getElementById("quantity");
-
-  let quantity =
-    parseInt(input.value || "1", 10);
-
-  if (quantity < 1) quantity = 1;
-
-  if (quantity > 100) quantity = 100;
-
-  input.value = quantity;
-
-  const total =
-    quantity * PRICE_PER_QR;
-
-  document
-    .getElementById("totalPrice")
-    .textContent =
-      "₹" + total;
-
-}
-
-
-/* =========================================================
-   CREATE RAZORPAY ORDER
-========================================================= */
-
-async function startPayment() {
-
-  if (!currentUser) {
-
-    alert("Please login first.");
-
-    return;
-  }
-
-  const message =
-    document
-      .getElementById("qrMessage")
-      .value
-      .trim();
-
-  const quantity =
-    parseInt(
-      document.getElementById("quantity").value,
-      10
-    );
-
-  if (!message) {
-
-    alert("Please enter your QR message.");
-
-    return;
-  }
-
-  if (!quantity || quantity < 1 || quantity > 100) {
-
-    alert("Quantity must be between 1 and 100.");
-
-    return;
-  }
-
-  const loading =
-    document.getElementById("paymentLoading");
-
-  loading.classList.remove("hidden");
-  loading.classList.add("flex");
-
-
-  const {
-    data,
-    error
-  } = await db.functions.invoke(
-    "create-razorpay-order",
-    {
-      body: {
-        quantity,
-        message
-      }
+      return;
     }
-  );
 
 
-  loading.classList.add("hidden");
-  loading.classList.remove("flex");
+    const button =
+      document.getElementById("signupButton");
+
+    button.disabled = true;
+    button.innerText = "Creating Account...";
 
 
-  if (error) {
+    const { data, error } =
+      await supabaseClient.auth.signUp({
 
-    console.error(error);
+        email: email,
 
-    alert(
-      "Could not create payment order."
+        password: password,
+
+        options: {
+
+          data: {
+            full_name: name
+          },
+
+          emailRedirectTo:
+            window.location.origin
+
+        }
+
+      });
+
+
+    button.disabled = false;
+    button.innerText = "Create Account";
+
+
+    if (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Account created! Check your email to verify your account.",
+      "success"
     );
 
-    return;
   }
 
-  if (!data || !data.orderId) {
 
-    alert(
-      data?.error ||
-      "Payment order creation failed."
+  // =====================================================
+  // LOGIN
+  // =====================================================
+
+  async function loginUser() {
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+
+    if (!email || !password) {
+
+      showMessage(
+        "Please enter email and password.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const button =
+      document.getElementById("loginButton");
+
+    button.disabled = true;
+    button.innerText = "Logging in...";
+
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+
+        email: email,
+
+        password: password
+
+      });
+
+
+    button.disabled = false;
+    button.innerText = "Login";
+
+
+    if (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Login successful!",
+      "success"
     );
 
-    return;
+
+    // Dashboard ke liye
+    setTimeout(() => {
+
+      window.location.href =
+        "dashboard.html";
+
+    }, 800);
+
   }
 
 
-  openRazorpayCheckout(
-    data.orderId,
-    data.amount,
-    data.currency,
-    data.orderRecordId
-  );
+  // =====================================================
+  // FORGOT PASSWORD
+  // =====================================================
 
-}
+  async function forgotPassword() {
 
-
-/* =========================================================
-   RAZORPAY CHECKOUT
-========================================================= */
-
-function openRazorpayCheckout(
-  orderId,
-  amount,
-  currency,
-  orderRecordId
-) {
-
-  const options = {
-
-    key: RAZORPAY_KEY_ID,
-
-    amount,
-
-    currency,
-
-    name: "Milgaya",
-
-    description:
-      "Milgaya QR Codes",
-
-    order_id: orderId,
-
-    prefill: {
-
-      email:
-        currentUser?.email || ""
-
-    },
-
-    theme: {
-
-      color: "#111111"
-
-    },
+    const email =
+      document.getElementById("loginEmail").value.trim();
 
 
-    handler:
+    if (!email) {
+
+      showMessage(
+        "First enter your email address.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const { error } =
+      await supabaseClient.auth.resetPasswordForEmail(
+
+        email,
+
+        {
+          redirectTo:
+            window.location.origin +
+            "/reset-password.html"
+        }
+
+      );
+
+
+    if (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Password reset link sent to your email.",
+      "success"
+    );
+
+  }
+
+
+  // =====================================================
+  // CHECK EXISTING LOGIN
+  // =====================================================
+
+  async function checkUser() {
+
+    const { data } =
+      await supabaseClient.auth.getSession();
+
+
+    if (data.session) {
+
+      window.location.href =
+        "dashboard.html";
+
+    }
+
+  }
+
+
+  checkUser();
+
+</script>
+
+</body>
+</html>
