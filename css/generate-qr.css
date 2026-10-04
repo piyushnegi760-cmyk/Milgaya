@@ -1,0 +1,712 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f7f9fc;
+  color: #172033;
+}
+
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid #e7ebf2;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 6%;
+}
+
+
+.back-btn {
+  color: #596579;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: 0.2s;
+}
+
+
+.back-btn:hover {
+  color: #496cff;
+}
+
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 21px;
+  font-weight: 800;
+  color: #172033;
+}
+
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 10px;
+
+  display: grid;
+  place-items: center;
+
+  background: #496cff;
+  color: white;
+
+  font-weight: 800;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.generator-page {
+  width: min(1150px, 92%);
+  margin: auto;
+
+  padding: 55px 0 80px;
+}
+
+
+.intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 45px;
+}
+
+
+.eyebrow {
+  display: inline-block;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+
+  color: #496cff;
+
+  background: #edf1ff;
+
+  padding: 8px 13px;
+  border-radius: 30px;
+
+  margin-bottom: 15px;
+}
+
+
+.intro h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+
+.intro h1 span {
+  color: #496cff;
+}
+
+
+.intro p {
+  color: #69758a;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+.generator-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 28px;
+
+  align-items: start;
+}
+
+
+/* =========================
+   FORM CARD
+========================= */
+
+.generator-card {
+  background: white;
+
+  border: 1px solid #e6eaf1;
+
+  border-radius: 22px;
+
+  padding: 30px;
+
+  box-shadow: 0 12px 40px rgba(25, 40, 70, 0.06);
+}
+
+
+.generator-card h2,
+.preview-area h2 {
+  font-size: 21px;
+  margin-bottom: 7px;
+}
+
+
+.card-subtitle,
+.preview-subtitle {
+  color: #7a8598;
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+
+
+.generator-card label {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  margin: 20px 0 8px;
+}
+
+
+.generator-card input,
+.generator-card textarea {
+  width: 100%;
+
+  border: 1px solid #dfe4ec;
+
+  border-radius: 12px;
+
+  padding: 14px;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  background: #fbfcfe;
+
+  transition: 0.2s;
+}
+
+
+.generator-card textarea {
+  resize: vertical;
+}
+
+
+.generator-card input:focus,
+.generator-card textarea:focus {
+  border-color: #496cff;
+
+  box-shadow: 0 0 0 4px rgba(73, 108, 255, 0.08);
+
+  background: white;
+}
+
+
+.generate-btn {
+  width: 100%;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 15px;
+
+  margin-top: 25px;
+
+  background: #496cff;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.generate-btn:hover {
+  background: #3c5de0;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================
+   ID BOX
+========================= */
+
+.id-box {
+  margin-top: 22px;
+
+  padding: 15px;
+
+  border-radius: 13px;
+
+  background: #f3f7f5;
+
+  border: 1px solid #dcece4;
+
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+
+  gap: 5px;
+}
+
+
+.id-box span {
+  grid-column: 1 / -1;
+
+  color: #748075;
+
+  font-size: 11px;
+}
+
+
+.id-box strong {
+  color: #26352d;
+
+  font-size: 17px;
+
+  letter-spacing: 1px;
+}
+
+
+.id-box button {
+  grid-column: 2;
+
+  grid-row: 2;
+
+  border: none;
+
+  background: white;
+
+  color: #496cff;
+
+  border: 1px solid #dfe5ee;
+
+  border-radius: 8px;
+
+  padding: 7px 10px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+
+/* =========================
+   PREVIEW
+========================= */
+
+.preview-area {
+  background: transparent;
+}
+
+
+.preview-subtitle {
+  margin-bottom: 18px;
+}
+
+
+.sticker {
+  width: 330px;
+  min-height: 430px;
+
+  margin: auto;
+
+  background: #ffffff;
+
+  border-radius: 28px;
+
+  border: 1px solid #e2e6ee;
+
+  padding: 25px 22px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 55px rgba(25, 40, 70, 0.12);
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+
+.sticker::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 6px;
+
+  background: #496cff;
+}
+
+
+/* =========================
+   MINI LOGO
+========================= */
+
+.mini-logo {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  text-align: left;
+
+  margin-bottom: 20px;
+}
+
+
+.mini-logo-icon {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 11px;
+
+  background: #496cff;
+
+  color: white;
+
+  display: grid;
+  place-items: center;
+
+  font-weight: 800;
+}
+
+
+.mini-logo strong {
+  display: block;
+
+  font-size: 18px;
+}
+
+
+.mini-logo small {
+  display: block;
+
+  font-size: 9px;
+
+  color: #7b8595;
+
+  margin-top: 2px;
+}
+
+
+/* =========================
+   QR
+========================= */
+
+.qr-wrapper {
+  width: 190px;
+  height: 190px;
+
+  background: white;
+
+  margin: auto;
+
+  padding: 10px;
+
+  border-radius: 14px;
+
+  border: 1px solid #edf0f5;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+
+#qrcode {
+  width: 170px;
+  height: 170px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+
+#qrcode img {
+  width: 170px;
+  height: 170px;
+}
+
+
+.scan-title {
+  margin-top: 18px;
+
+  font-size: 18px;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  color: #172033;
+}
+
+
+.scan-subtitle {
+  margin-top: 5px;
+
+  color: #6e7888;
+
+  font-size: 11px;
+}
+
+
+.item-display {
+  margin-top: 12px;
+
+  display: inline-block;
+
+  padding: 6px 13px;
+
+  border-radius: 30px;
+
+  background: #edf1ff;
+
+  color: #496cff;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+.sticker-divider {
+  height: 1px;
+
+  background: #edf0f4;
+
+  margin: 18px 0 12px;
+}
+
+
+.sticker-id {
+  font-size: 10px;
+
+  color: #7a8493;
+}
+
+
+.sticker-id strong {
+  color: #172033;
+
+  letter-spacing: 1px;
+}
+
+
+.privacy-note {
+  margin-top: 10px;
+
+  font-size: 9px;
+
+  color: #8b95a4;
+}
+
+
+/* =========================
+   DOWNLOAD BUTTONS
+========================= */
+
+.download-buttons {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+
+.download-buttons button {
+  flex: 1;
+
+  border: none;
+
+  border-radius: 11px;
+
+  padding: 13px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  transition: 0.2s;
+}
+
+
+.download-qr {
+  background: #eaf0ff;
+  color: #496cff;
+}
+
+
+.download-sticker {
+  background: #496cff;
+  color: white;
+}
+
+
+.download-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+
+/* =========================
+   HOW SECTION
+========================= */
+
+.how-section {
+  margin-top: 75px;
+
+  text-align: center;
+}
+
+
+.how-section h2 {
+  font-size: 26px;
+
+  margin-bottom: 28px;
+}
+
+
+.steps {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 18px;
+}
+
+
+.step {
+  background: white;
+
+  border: 1px solid #e6eaf1;
+
+  border-radius: 18px;
+
+  padding: 25px;
+}
+
+
+.step-number {
+  width: 35px;
+  height: 35px;
+
+  margin: 0 auto 14px;
+
+  border-radius: 50%;
+
+  display: grid;
+  place-items: center;
+
+  background: #edf1ff;
+
+  color: #496cff;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+
+.step h3 {
+  font-size: 15px;
+
+  margin-bottom: 7px;
+}
+
+
+.step p {
+  font-size: 12px;
+
+  color: #778294;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+  .generator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-area {
+    margin-top: 15px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .topbar {
+    padding: 0 20px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .generator-page {
+    width: 92%;
+
+    padding-top: 35px;
+  }
+
+  .generator-card {
+    padding: 22px;
+  }
+
+  .sticker {
+    width: 100%;
+    max-width: 330px;
+  }
+
+  .download-buttons {
+    flex-direction: column;
+  }
+
+}
