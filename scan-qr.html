@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan QR | Milgaya</title>
+
+  <link rel="stylesheet" href="css/scan-qr.css">
+
+  <!-- QR Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+
+<body>
+
+  <main class="scan-page">
+
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+
+    <section class="scanner-card">
+
+      <div class="logo">Milgaya</div>
+
+      <div class="qr-icon">⌁</div>
+
+      <h1>Scan QR Code</h1>
+
+      <p class="subtitle">
+        Scan a Milgaya QR code to contact the owner.
+      </p>
+
+      <div id="reader"></div>
+
+      <div class="scanner-info">
+        <span class="info-dot"></span>
+        Point your camera at the QR code
+      </div>
+
+      <button id="startScanner" class="scan-btn">
+        Open Camera
+      </button>
+
+      <button id="stopScanner" class="stop-btn" style="display:none;">
+        Stop Scanner
+      </button>
+
+      <div id="scanStatus" class="scan-status"></div>
+
+    </section>
+
+  </main>
+
+  <script src="js/scan-qr.js"></script>
+</body>
+</html>
