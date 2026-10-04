@@ -1,86 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generate QR — Milgaya</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <title>Generate Milgaya QR</title>
+
+  <link rel="stylesheet" href="css/generate-qr.css">
+
+  <!-- QR Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- html2canvas for sticker download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
 
-<header class="navbar">
+  <header class="topbar">
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
 
-  <a href="index.html" class="logo">Mil<span>gaya</span></a>
-
-  <nav>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="my-qr.html">My QR</a>
-  </nav>
-
-</header>
-
-
-<main class="form-page">
-
-  <div class="form-card">
-
-    <span class="small-label">CREATE QR</span>
-
-    <h1>Generate your QR</h1>
-
-    <p class="muted">
-      This QR will later be connected to your Milgaya account.
-    </p>
-
-
-    <label>Number of QR codes</label>
-
-    <input
-      type="number"
-      id="quantity"
-      value="1"
-      min="1"
-      max="100"
-      oninput="calculateTotal()"
-    >
-
-
-    <label>Message for finder</label>
-
-    <textarea
-      id="message"
-      maxlength="250"
-      placeholder="Example: Please contact me if you find this item."
-    ></textarea>
-
-
-    <div class="total-box">
-
-      <span>Total</span>
-
-      <strong id="total">
-        ₹25
-      </strong>
-
+    <div class="brand">
+      <div class="brand-icon">M</div>
+      <span>Milgaya</span>
     </div>
+  </header>
 
 
-    <button
-      class="btn primary full"
-      onclick="prepareQR()"
-    >
-      Continue
-    </button>
+  <main class="generator-page">
 
-    <p id="qrMessage" class="form-message"></p>
+    <section class="intro">
+      <span class="eyebrow">SMART RETURN STICKER</span>
 
-  </div>
+      <h1>Create your <span>Milgaya QR</span></h1>
 
-</main>
+      <p>
+        Put this sticker on your bag, wallet, laptop, keys or other belongings.
+        Anyone who finds it can scan and reach your Milgaya page.
+      </p>
+    </section>
 
-<script src="js/qr.js"></script>
+
+    <section class="generator-grid">
+
+      <!-- FORM -->
+      <div class="generator-card">
+
+        <h2>Sticker Details</h2>
+        <p class="card-subtitle">
+          Enter basic information for your sticker.
+        </p>
+
+
+        <label for="itemName">Item Name</label>
+
+        <input
+          type="text"
+          id="itemName"
+          placeholder="e.g. My Backpack"
+          maxlength="40"
+        >
+
+
+        <label for="finderMessage">Finder Message</label>
+
+        <textarea
+          id="finderMessage"
+          rows="4"
+          maxlength="120"
+          placeholder="e.g. Please scan this sticker to help return my item."
+        ></textarea>
+
+
+        <button class="generate-btn" id="generateBtn">
+          Generate Milgaya QR
+        </button>
+
+
+        <div class="id-box" id="idBox">
+
+          <span>Unique QR ID</span>
+
+          <strong id="qrId">
+            —
+          </strong>
+
+          <button id="copyIdBtn">
+            Copy ID
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- PREVIEW -->
+      <div class="preview-area">
+
+        <h2>Sticker Preview</h2>
+
+        <p class="preview-subtitle">
+          This is how your physical sticker can look.
+        </p>
+
+
+        <div class="sticker" id="sticker">
+
+          <div class="sticker-top">
+
+            <div class="mini-logo">
+              <div class="mini-logo-icon">M</div>
+
+              <div>
+                <strong>Milgaya</strong>
+                <small>Smart Return</small>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="qr-wrapper">
+
+            <div id="qrcode"></div>
+
+          </div>
+
+
+          <div class="scan-title">
+            SCAN IF FOUND
+          </div>
+
+          <div class="scan-subtitle">
+            Help this item find its owner
+          </div>
+
+
+          <div class="item-display" id="stickerItem">
+            Your Item
+          </div>
+
+
+          <div class="sticker-divider"></div>
+
+
+          <div class="sticker-id">
+            ID: <strong id="stickerQrId">MG-XXXXXX</strong>
+          </div>
+
+
+          <div class="privacy-note">
+            Owner contact stays private
+          </div>
+
+        </div>
+
+
+        <div class="download-buttons">
+
+          <button class="download-qr" id="downloadQr">
+            Download QR
+          </button>
+
+          <button class="download-sticker" id="downloadSticker">
+            Download Sticker
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="how-section">
+
+      <h2>How Milgaya works</h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-number">01</div>
+          <h3>Generate</h3>
+          <p>Create a unique Milgaya QR.</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">02</div>
+          <h3>Stick</h3>
+          <p>Put the sticker on your item.</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">03</div>
+          <h3>Return</h3>
+          <p>A finder scans it and contacts the owner.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script src="js/generate-qr.js"></script>
 
 </body>
 </html>
