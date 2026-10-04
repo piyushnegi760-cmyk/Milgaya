@@ -1,0 +1,304 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f7f9fc;
+  color: #172033;
+}
+
+.scan-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+  position: relative;
+}
+
+/* Background */
+
+.scan-page::before {
+  content: "";
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background: rgba(73, 108, 255, 0.08);
+  filter: blur(100px);
+  border-radius: 50%;
+  top: -120px;
+  left: -100px;
+  pointer-events: none;
+}
+
+.scan-page::after {
+  content: "";
+  position: fixed;
+  width: 350px;
+  height: 350px;
+  background: rgba(91, 185, 140, 0.08);
+  filter: blur(100px);
+  border-radius: 50%;
+  bottom: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+
+/* Back button */
+
+.back-btn {
+  position: fixed;
+  top: 25px;
+  left: 25px;
+
+  text-decoration: none;
+  color: #172033;
+
+  background: #ffffff;
+  border: 1px solid #e5e9f2;
+
+  padding: 11px 17px;
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: 0.25s ease;
+  z-index: 10;
+}
+
+.back-btn:hover {
+  border-color: #496cff;
+  color: #496cff;
+  transform: translateX(-3px);
+}
+
+/* Scanner card */
+
+.scanner-card {
+  width: 100%;
+  max-width: 470px;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  border: 1px solid #e6eaf2;
+  border-radius: 28px;
+
+  padding: 34px;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 70px rgba(31, 45, 75, 0.10);
+
+  animation: cardAppear 0.6s ease;
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo */
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  color: #496cff;
+  margin-bottom: 24px;
+}
+
+/* QR icon */
+
+.qr-icon {
+  width: 62px;
+  height: 62px;
+
+  margin: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: #eef2ff;
+  color: #496cff;
+
+  font-size: 35px;
+  font-weight: 700;
+
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 9px;
+}
+
+.subtitle {
+  color: #70798c;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* Scanner */
+
+#reader {
+  width: 100%;
+  max-width: 350px;
+  margin: auto;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #f1f4f8;
+
+  border: 1px solid #e1e6ef;
+
+  min-height: 120px;
+}
+
+#reader video {
+  border-radius: 18px;
+}
+
+#reader img {
+  display: none;
+}
+
+/* Scanner information */
+
+.scanner-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 18px;
+
+  font-size: 13px;
+  color: #737c8e;
+}
+
+.info-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #5bb98c;
+
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Buttons */
+
+.scan-btn,
+.stop-btn {
+  width: 100%;
+
+  border: none;
+
+  padding: 14px;
+
+  border-radius: 13px;
+
+  margin-top: 22px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.scan-btn {
+  background: #496cff;
+  color: white;
+}
+
+.scan-btn:hover {
+  background: #3d5de2;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(73, 108, 255, 0.22);
+}
+
+.stop-btn {
+  background: #eef1f5;
+  color: #4d5668;
+}
+
+.stop-btn:hover {
+  background: #e4e8ee;
+}
+
+/* Status */
+
+.scan-status {
+  margin-top: 15px;
+
+  font-size: 13px;
+
+  color: #6c7587;
+
+  min-height: 20px;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .scan-page {
+    padding: 70px 15px 20px;
+  }
+
+  .back-btn {
+    top: 16px;
+    left: 16px;
+  }
+
+  .scanner-card {
+    padding: 25px 18px;
+    border-radius: 22px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+
+  #reader {
+    max-width: 100%;
+  }
+}
