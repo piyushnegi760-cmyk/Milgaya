@@ -1,53 +1,560 @@
-<!DOCTYPE html>
-<html lang="en">
+/* =========================================
+   CONTACT SUPPORT
+========================================= */
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact — Milgaya</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-
-<body>
-
-<header class="navbar">
-
-  <a href="index.html" class="logo">Mil<span>gaya</span></a>
-
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-  </nav>
-
-</header>
+.support-section {
+  margin-top: 34px;
+  padding-bottom: 30px;
+}
 
 
-<main class="content-page">
+/* Heading */
 
-  <span class="small-label">CONTACT</span>
+.support-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 25px;
+  margin-bottom: 22px;
+}
 
-  <h1>Have a question?</h1>
+.section-label {
+  display: inline-block;
 
-  <p>
-    Milgaya support information will be connected here later.
-  </p>
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+
+  color: #496cff;
+
+  margin-bottom: 7px;
+}
+
+.support-heading h2 {
+  margin: 0;
+
+  font-size: 25px;
+  color: #172033;
+}
+
+.support-heading p {
+  margin-top: 7px;
+
+  max-width: 620px;
+
+  color: #737c8e;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
 
 
-  <div class="contact-card">
+/* Support availability */
 
-    <h3>Milgaya Support</h3>
+.support-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-    <p>
-      For help with your QR code or account, contact Milgaya support.
-    </p>
+  padding: 9px 13px;
 
-    <a href="mailto:support@milgaya.in" class="btn primary">
-      Email Support
-    </a>
+  background: #f0faf5;
 
-  </div>
+  border: 1px solid #dcefe5;
 
-</main>
+  color: #4b9c78;
 
-</body>
-</html>
+  border-radius: 30px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  background: #5bb98c;
+
+  border-radius: 50%;
+
+  animation: supportPulse 1.8s infinite;
+}
+
+@keyframes supportPulse {
+
+  0% {
+    box-shadow: 0 0 0 0 rgba(91,185,140,.35);
+  }
+
+  70% {
+    box-shadow: 0 0 0 7px rgba(91,185,140,0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(91,185,140,0);
+  }
+
+}
+
+
+/* Cards */
+
+.support-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 18px;
+}
+
+.support-card {
+  display: flex;
+  gap: 18px;
+
+  padding: 23px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e9f2;
+
+  border-radius: 20px;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.support-card:hover {
+  transform: translateY(-4px);
+
+  border-color: #d8def0;
+
+  box-shadow:
+    0 16px 40px rgba(31,45,75,.08);
+}
+
+
+/* Icons */
+
+.support-icon {
+  width: 48px;
+  height: 48px;
+
+  min-width: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  font-size: 21px;
+}
+
+.blue-icon {
+  background: #eef2ff;
+}
+
+.green-icon {
+  background: #edf9f3;
+}
+
+
+/* Card text */
+
+.support-card-content {
+  flex: 1;
+}
+
+.support-card h3 {
+  margin: 0 0 7px;
+
+  font-size: 17px;
+
+  color: #172033;
+}
+
+.support-card p {
+  margin: 0;
+
+  color: #747d8e;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* Action buttons */
+
+.support-action {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 8px;
+
+  border: 0;
+
+  margin-top: 15px;
+
+  padding: 9px 13px;
+
+  border-radius: 10px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .2s ease;
+}
+
+.support-action span {
+  transition: transform .2s ease;
+}
+
+.support-action:hover span {
+  transform: translateX(3px);
+}
+
+.blue-action {
+  background: #496cff;
+  color: #ffffff;
+}
+
+.blue-action:hover {
+  background: #3d5de2;
+}
+
+.green-action {
+  background: #edf9f3;
+  color: #4b9c78;
+}
+
+.green-action:hover {
+  background: #e0f4ea;
+}
+
+
+/* Support form */
+
+.support-form-card {
+  background: #ffffff;
+
+  border: 1px solid #e5e9f2;
+
+  border-radius: 22px;
+
+  padding: 26px;
+
+  margin-bottom: 18px;
+
+  box-shadow:
+    0 10px 35px rgba(31,45,75,.04);
+}
+
+.support-form-header {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 24px;
+}
+
+.support-form-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eef2ff;
+
+  border-radius: 14px;
+
+  font-size: 20px;
+}
+
+.support-form-header h3 {
+  margin: 0;
+
+  font-size: 18px;
+
+  color: #172033;
+}
+
+.support-form-header p {
+  margin: 5px 0 0;
+
+  font-size: 13px;
+
+  color: #7a8394;
+}
+
+
+/* Form */
+
+.support-form-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+}
+
+.support-field {
+  margin-bottom: 17px;
+}
+
+.support-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #3d4658;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.support-field input,
+.support-field select,
+.support-field textarea {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  background: #fafbfc;
+
+  border: 1px solid #e1e6ef;
+
+  border-radius: 11px;
+
+  outline: none;
+
+  color: #172033;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  transition: .2s ease;
+}
+
+.support-field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.support-field input:focus,
+.support-field select:focus,
+.support-field textarea:focus {
+  background: #ffffff;
+
+  border-color: #496cff;
+
+  box-shadow:
+    0 0 0 3px rgba(73,108,255,.08);
+}
+
+
+/* Bottom */
+
+.support-form-bottom {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.support-note {
+  color: #7a8394;
+
+  font-size: 12px;
+}
+
+.send-support-btn {
+  border: 0;
+
+  background: #496cff;
+
+  color: #ffffff;
+
+  padding: 12px 18px;
+
+  border-radius: 11px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .25s ease;
+}
+
+.send-support-btn span {
+  margin-left: 6px;
+}
+
+.send-support-btn:hover {
+  background: #3d5de2;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(73,108,255,.18);
+}
+
+
+/* Quick help */
+
+.quick-help {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 21px 24px;
+
+  background: #f8fbff;
+
+  border: 1px solid #e3e9f7;
+
+  border-radius: 18px;
+}
+
+.quick-help h3 {
+  margin: 0 0 5px;
+
+  font-size: 16px;
+
+  color: #172033;
+}
+
+.quick-help p {
+  margin: 0;
+
+  color: #7a8394;
+
+  font-size: 12px;
+}
+
+.faq-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 10px 15px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe5ef;
+
+  border-radius: 10px;
+
+  color: #496cff;
+
+  text-decoration: none;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  transition: .2s ease;
+}
+
+.faq-btn:hover {
+  border-color: #496cff;
+
+  transform: translateY(-2px);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .support-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .support-form-grid {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+  .support-form-bottom {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .send-support-btn {
+    width: 100%;
+  }
+
+  .quick-help {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .faq-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .support-card {
+    padding: 18px;
+
+    gap: 13px;
+  }
+
+  .support-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+  }
+
+  .support-form-card {
+    padding: 19px;
+  }
+
+  .support-heading h2 {
+    font-size: 22px;
+  }
+
+}
