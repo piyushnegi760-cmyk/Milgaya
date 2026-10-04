@@ -1,93 +1,884 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Milgaya</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+        content="Milgaya Dashboard - Manage your QR codes and lost & found items">
+
+  <title>Dashboard | Milgaya</title>
+
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 
 <body>
 
-<header class="navbar dashboard-nav">
+  <!-- ================= APP ================= -->
 
-  <a href="index.html" class="logo">Mil<span>gaya</span></a>
-
-  <nav>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="my-qr.html">My QR</a>
-    <a href="notifications.html">Notifications</a>
-    <button onclick="logout()" class="logout-btn">Logout</button>
-  </nav>
-
-</header>
+  <div class="dashboard-app">
 
 
-<main class="dashboard">
+    <!-- ================= SIDEBAR ================= -->
 
-  <div class="welcome">
-    <div>
-      <span class="small-label">DASHBOARD</span>
-      <h1>Welcome 👋</h1>
-      <p>Manage your Milgaya QR codes.</p>
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-top">
+
+        <a href="index.html" class="dashboard-logo">
+          <span class="logo-mark">✓</span>
+          <span>Milgaya</span>
+        </a>
+
+        <button
+          class="mobile-close"
+          id="closeSidebar"
+          aria-label="Close menu">
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- PROFILE -->
+
+      <div class="user-mini-card">
+
+        <div class="user-avatar" id="sidebarAvatar">
+          P
+        </div>
+
+        <div class="user-mini-info">
+
+          <strong id="sidebarUserName">
+            Welcome
+          </strong>
+
+          <span id="sidebarUserEmail">
+            Your account
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- NAVIGATION -->
+
+      <nav class="sidebar-nav">
+
+        <p class="nav-title">
+          MAIN
+        </p>
+
+        <a href="dashboard.html"
+           class="sidebar-link active">
+
+          <span class="nav-icon">⌂</span>
+
+          <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="generate-qr.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">＋</span>
+
+          <span>Create QR</span>
+
+        </a>
+
+
+        <a href="my-qr.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">▦</span>
+
+          <span>My QR Codes</span>
+
+        </a>
+
+
+        <p class="nav-title second-title">
+          ACTIVITY
+        </p>
+
+
+        <a href="notifications.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">♧</span>
+
+          <span>Notifications</span>
+
+          <span class="notification-count"
+                id="notificationCount">
+            0
+          </span>
+
+        </a>
+
+
+        <a href="found-item.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">✓</span>
+
+          <span>Found Items</span>
+
+        </a>
+
+
+        <p class="nav-title second-title">
+          SUPPORT
+        </p>
+
+
+        <a href="about.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">i</span>
+
+          <span>About Milgaya</span>
+
+        </a>
+
+
+        <a href="contact.html"
+           class="sidebar-link">
+
+          <span class="nav-icon">?</span>
+
+          <span>Contact Support</span>
+
+        </a>
+
+      </nav>
+
+
+      <!-- SIDEBAR BOTTOM -->
+
+      <div class="sidebar-bottom">
+
+        <div class="security-mini">
+
+          <div class="security-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>Your account is secure</strong>
+
+            <span>Milgaya protection active</span>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="logout-button"
+          id="logoutButton">
+
+          <span>↪</span>
+          Logout
+
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ================= OVERLAY ================= -->
+
+    <div class="sidebar-overlay"
+         id="sidebarOverlay">
     </div>
 
-    <a href="generate-qr.html" class="btn primary">
-      + Generate QR
-    </a>
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="dashboard-main">
+
+
+      <!-- TOPBAR -->
+
+      <header class="dashboard-topbar">
+
+        <div class="topbar-left">
+
+          <button
+            class="menu-button"
+            id="openSidebar"
+            aria-label="Open menu">
+
+            ☰
+
+          </button>
+
+          <div>
+
+            <span class="page-small-title">
+              YOUR SPACE
+            </span>
+
+            <h1>
+              Dashboard
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <a href="notifications.html"
+             class="topbar-notification"
+             aria-label="Notifications">
+
+            ♧
+
+            <span id="topNotificationDot"></span>
+
+          </a>
+
+
+          <a href="generate-qr.html"
+             class="top-create-button">
+
+            <span>＋</span>
+            Create QR
+
+          </a>
+
+        </div>
+
+      </header>
+
+
+      <!-- CONTENT -->
+
+      <div class="dashboard-content">
+
+
+        <!-- ================= WELCOME ================= -->
+
+        <section class="welcome-section">
+
+          <div class="welcome-copy">
+
+            <div class="welcome-label">
+
+              <span class="green-dot"></span>
+
+              Milgaya protection center
+
+            </div>
+
+            <h2>
+              Good to see you,
+              <span id="welcomeName">there</span>.
+            </h2>
+
+            <p>
+              Keep your belongings protected and manage
+              all your Milgaya QR codes from one place.
+            </p>
+
+          </div>
+
+
+          <div class="welcome-action">
+
+            <a href="generate-qr.html"
+               class="main-create-button">
+
+              <span class="create-plus">＋</span>
+
+              <div>
+                <strong>Create New QR</strong>
+                <small>Protect another item</small>
+              </div>
+
+              <span class="arrow">→</span>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================= STATS ================= -->
+
+        <section class="stats-grid">
+
+
+          <div class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Total QR Codes
+              </span>
+
+              <div class="stat-icon blue">
+                ▦
+              </div>
+
+            </div>
+
+            <div class="stat-number"
+                 id="totalQR">
+              0
+            </div>
+
+            <div class="stat-footer">
+
+              <span class="stat-status blue-text">
+                Active protection
+              </span>
+
+              <span>All time</span>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Active QR
+              </span>
+
+              <div class="stat-icon green">
+                ✓
+              </div>
+
+            </div>
+
+            <div class="stat-number"
+                 id="activeQR">
+              0
+            </div>
+
+            <div class="stat-footer">
+
+              <span class="stat-status green-text">
+                Protected
+              </span>
+
+              <span>Currently</span>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Total Scans
+              </span>
+
+              <div class="stat-icon purple">
+                ⌁
+              </div>
+
+            </div>
+
+            <div class="stat-number"
+                 id="totalScans">
+              0
+            </div>
+
+            <div class="stat-footer">
+
+              <span class="stat-status purple-text">
+                QR activity
+              </span>
+
+              <span>All time</span>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-top">
+
+              <span class="stat-label">
+                Found Items
+              </span>
+
+              <div class="stat-icon orange">
+                ♡
+              </div>
+
+            </div>
+
+            <div class="stat-number"
+                 id="foundItems">
+              0
+            </div>
+
+            <div class="stat-footer">
+
+              <span class="stat-status orange-text">
+                Returned
+              </span>
+
+              <span>All time</span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================= MAIN GRID ================= -->
+
+        <section class="dashboard-grid">
+
+
+          <!-- QR OVERVIEW -->
+
+          <div class="dashboard-card qr-overview">
+
+            <div class="card-header">
+
+              <div>
+
+                <span class="card-label">
+                  YOUR PROTECTION
+                </span>
+
+                <h3>
+                  QR Code Overview
+                </h3>
+
+              </div>
+
+              <a href="my-qr.html"
+                 class="view-link">
+
+                View all →
+
+              </a>
+
+            </div>
+
+
+            <div class="protection-content">
+
+              <div class="protection-visual">
+
+                <div class="protection-ring">
+
+                  <div class="ring-inner">
+
+                    <span id="protectionPercent">
+                      0%
+                    </span>
+
+                    <small>
+                      protected
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="protection-info">
+
+                <div class="protection-title">
+
+                  <span class="online-dot"></span>
+
+                  Protection is active
+
+                </div>
+
+                <p>
+                  Your Milgaya QR codes help finders
+                  connect with you safely.
+                </p>
+
+
+                <div class="protection-line">
+
+                  <span>Active codes</span>
+
+                  <strong id="activeQRText">
+                    0
+                  </strong>
+
+                </div>
+
+
+                <div class="protection-line">
+
+                  <span>Scans received</span>
+
+                  <strong id="scanText">
+                    0
+                  </strong>
+
+                </div>
+
+
+                <a href="generate-qr.html"
+                   class="small-action">
+
+                  + Protect another item
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- QUICK ACTIONS -->
+
+          <div class="dashboard-card quick-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <span class="card-label">
+                  QUICK ACTIONS
+                </span>
+
+                <h3>
+                  What do you want to do?
+                </h3>
+
+              </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+              <a href="generate-qr.html"
+                 class="quick-action">
+
+                <div class="quick-action-icon blue">
+                  ＋
+                </div>
+
+                <div>
+
+                  <strong>
+                    Create QR
+                  </strong>
+
+                  <span>
+                    Protect an item
+                  </span>
+
+                </div>
+
+                <span class="quick-arrow">
+                  →
+                </span>
+
+              </a>
+
+
+              <a href="my-qr.html"
+                 class="quick-action">
+
+                <div class="quick-action-icon green">
+                  ▦
+                </div>
+
+                <div>
+
+                  <strong>
+                    My QR Codes
+                  </strong>
+
+                  <span>
+                    View your codes
+                  </span>
+
+                </div>
+
+                <span class="quick-arrow">
+                  →
+                </span>
+
+              </a>
+
+
+              <a href="notifications.html"
+                 class="quick-action">
+
+                <div class="quick-action-icon purple">
+                  ♧
+                </div>
+
+                <div>
+
+                  <strong>
+                    Notifications
+                  </strong>
+
+                  <span>
+                    Check recent activity
+                  </span>
+
+                </div>
+
+                <span class="quick-arrow">
+                  →
+                </span>
+
+              </a>
+
+
+              <a href="found-item.html"
+                 class="quick-action">
+
+                <div class="quick-action-icon orange">
+                  ✓
+                </div>
+
+                <div>
+
+                  <strong>
+                    Found Items
+                  </strong>
+
+                  <span>
+                    Manage returned items
+                  </span>
+
+                </div>
+
+                <span class="quick-arrow">
+                  →
+                </span>
+
+              </a>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ================= RECENT ACTIVITY ================= -->
+
+        <section class="dashboard-card activity-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <span class="card-label">
+                RECENT ACTIVITY
+              </span>
+
+              <h3>
+                Your latest activity
+              </h3>
+
+            </div>
+
+            <a href="notifications.html"
+               class="view-link">
+
+              View notifications →
+
+            </a>
+
+          </div>
+
+
+          <div class="activity-list"
+               id="activityList">
+
+
+            <div class="empty-activity">
+
+              <div class="empty-icon">
+                ⌁
+              </div>
+
+              <div>
+
+                <strong>
+                  No recent activity
+                </strong>
+
+                <p>
+                  Your QR scan activity will appear here.
+                </p>
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- ================= BOTTOM GRID ================= -->
+
+        <section class="bottom-grid">
+
+
+          <!-- GETTING STARTED -->
+
+          <div class="dashboard-card getting-started">
+
+            <div class="card-header">
+
+              <div>
+
+                <span class="card-label">
+                  GETTING STARTED
+                </span>
+
+                <h3>
+                  Protect your first item
+                </h3>
+
+              </div>
+
+            </div>
+
+
+            <div class="getting-content">
+
+              <div class="getting-icon">
+                ✓
+              </div>
+
+              <div class="getting-text">
+
+                <strong>
+                  Create your first Milgaya QR
+                </strong>
+
+                <p>
+                  Generate a unique QR code and
+                  attach it to something important.
+                </p>
+
+                <a href="generate-qr.html"
+                   class="text-button">
+
+                  Get started →
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SECURITY -->
+
+          <div class="dashboard-card security-card">
+
+            <div class="security-header">
+
+              <div class="security-big-icon">
+                ✓
+              </div>
+
+              <div>
+
+                <span class="card-label">
+                  SECURITY
+                </span>
+
+                <h3>
+                  Your privacy matters
+                </h3>
+
+              </div>
+
+            </div>
+
+
+            <p>
+              Your personal information is not
+              publicly displayed when someone scans
+              your QR code.
+            </p>
+
+
+            <div class="security-status">
+
+              <span class="online-dot"></span>
+
+              <span>
+                Privacy protection active
+              </span>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ================= FOOTER NOTE ================= -->
+
+        <div class="dashboard-footer">
+
+          <span>
+            Milgaya · Smart Lost & Found
+          </span>
+
+          <span>
+            Simple. Safe. Connected.
+          </span>
+
+        </div>
+
+
+      </div>
+
+    </main>
+
   </div>
 
 
-  <div class="stats">
-
-    <div class="stat-card">
-      <span>QR Codes</span>
-      <strong id="qrCount">0</strong>
-    </div>
-
-    <div class="stat-card">
-      <span>Scans</span>
-      <strong id="scanCount">0</strong>
-    </div>
-
-    <div class="stat-card">
-      <span>Notifications</span>
-      <strong id="notificationCount">0</strong>
-    </div>
-
-  </div>
-
-
-  <section class="dashboard-section">
-
-    <div class="section-heading">
-      <h2>Get your QR code</h2>
-      <p>Attach it to anything you don't want to lose.</p>
-    </div>
-
-    <div class="purchase-card">
-
-      <div>
-        <h3>Milgaya QR</h3>
-        <p>Unique QR code for your belongings.</p>
-      </div>
-
-      <div class="price">
-        ₹25 <small>/ QR</small>
-      </div>
-
-      <a href="generate-qr.html" class="btn primary">
-        Generate QR
-      </a>
-
-    </div>
-
-  </section>
-
-</main>
-
-<script src="js/dashboard.js"></script>
+  <script src="js/dashboard.js"></script>
 
 </body>
 </html>
